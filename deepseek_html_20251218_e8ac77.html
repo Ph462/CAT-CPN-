@@ -1,0 +1,2258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CAT CPN - Tech, Tutorials & Entertainment Hub</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'Poppins', system-ui, sans-serif;
+        }
+        
+        :root {
+            --primary: #2563eb;
+            --secondary: #7c3aed;
+            --accent: #06b6d4;
+            --danger: #ef4444;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --dark: #0f172a;
+            --darker: #020617;
+            --light: #f8fafc;
+            --gradient: linear-gradient(135deg, #2563eb 0%, #7c3aed 50%, #06b6d4 100%);
+            --glass: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.1);
+        }
+        
+        body {
+            background: var(--darker);
+            color: var(--light);
+            min-height: 100vh;
+            overflow-x: hidden;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(37, 99, 235, 0.1) 0%, transparent 20%),
+                radial-gradient(circle at 90% 80%, rgba(124, 58, 237, 0.1) 0%, transparent 20%),
+                radial-gradient(circle at 50% 50%, rgba(6, 182, 212, 0.05) 0%, transparent 50%);
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        /* Animated Background */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+        
+        /* Navigation */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            padding: 15px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .nav-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            text-decoration: none;
+        }
+        
+        .logo-icon {
+            width: 50px;
+            height: 50px;
+            background: var(--gradient);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        
+        .logo-text {
+            font-size: 28px;
+            font-weight: 800;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 25px;
+            align-items: center;
+        }
+        
+        .nav-link {
+            color: var(--light);
+            text-decoration: none;
+            font-weight: 500;
+            padding: 10px 20px;
+            border-radius: 10px;
+            transition: all 0.3s;
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .nav-link:hover, .nav-link.active {
+            background: rgba(37, 99, 235, 0.1);
+            color: var(--primary);
+        }
+        
+        .nav-link.active::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80%;
+            height: 2px;
+            background: var(--gradient);
+        }
+        
+        .user-menu {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .cta-button {
+            background: var(--gradient);
+            color: white;
+            padding: 12px 30px;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .cta-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(37, 99, 235, 0.4);
+        }
+        
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--light);
+            font-size: 24px;
+            cursor: pointer;
+        }
+        
+        /* Hero Section */
+        .hero {
+            padding: 180px 0 100px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero-badge {
+            display: inline-block;
+            background: rgba(6, 182, 212, 0.1);
+            color: var(--accent);
+            padding: 10px 25px;
+            border-radius: 50px;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 30px;
+            border: 1px solid rgba(6, 182, 212, 0.3);
+        }
+        
+        .main-title {
+            font-size: 5.5rem;
+            font-weight: 800;
+            line-height: 1.1;
+            margin-bottom: 20px;
+            background: linear-gradient(to right, #fff 30%, var(--primary) 70%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .main-title span {
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .hero-description {
+            font-size: 1.5rem;
+            color: #cbd5e1;
+            max-width: 700px;
+            margin: 0 auto 50px;
+            line-height: 1.8;
+        }
+        
+        .hero-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin-bottom: 60px;
+            flex-wrap: wrap;
+        }
+        
+        /* Stats Section */
+        .stats-section {
+            margin: 100px 0;
+        }
+        
+        .section-title {
+            font-size: 2.5rem;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 40px;
+            text-align: center;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+        }
+        
+        .stat-card {
+            background: var(--glass);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 30px;
+            text-align: center;
+            transition: all 0.3s;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary);
+        }
+        
+        .stat-icon {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .stat-number {
+            font-size: 3rem;
+            font-weight: 800;
+            margin-bottom: 10px;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        /* Category Boxes */
+        .categories-section {
+            margin: 80px 0;
+        }
+        
+        .categories-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+        }
+        
+        .category-box {
+            background: var(--glass);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 30px;
+            transition: all 0.4s;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .category-box:hover {
+            transform: translateY(-10px);
+            border-color: var(--primary);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+        
+        .category-box::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: var(--gradient);
+        }
+        
+        .category-header {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+        
+        .category-icon {
+            width: 70px;
+            height: 70px;
+            background: var(--gradient);
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 30px;
+            color: white;
+        }
+        
+        .category-info h3 {
+            font-size: 1.8rem;
+            margin-bottom: 5px;
+            color: var(--light);
+        }
+        
+        .category-count {
+            color: #94a3b8;
+            font-size: 0.9rem;
+        }
+        
+        /* Projects Grid */
+        .projects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+        }
+        
+        .project-card {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 15px;
+            overflow: hidden;
+            transition: all 0.3s;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+        }
+        
+        .project-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            border-color: var(--primary);
+        }
+        
+        .project-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            margin: 15px 0;
+        }
+        
+        .project-tag {
+            background: rgba(37, 99, 235, 0.1);
+            color: var(--primary);
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+        
+        .project-content {
+            padding: 25px;
+        }
+        
+        .project-title {
+            font-size: 1.4rem;
+            margin-bottom: 10px;
+            color: var(--light);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .project-price {
+            background: var(--gradient);
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+        
+        .project-description {
+            color: #94a3b8;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+        
+        .project-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        .action-btn {
+            flex: 1;
+            padding: 12px;
+            border-radius: 10px;
+            border: none;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        
+        .details-btn {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--light);
+        }
+        
+        .visit-btn {
+            background: var(--gradient);
+            color: white;
+        }
+        
+        .action-btn:hover {
+            transform: translateY(-2px);
+        }
+        
+        /* Feedback Section */
+        .feedback-section {
+            margin: 100px 0;
+            background: var(--glass);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            border-radius: 30px;
+            padding: 60px;
+        }
+        
+        .feedback-form {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 40px;
+            border-radius: 20px;
+            margin-bottom: 50px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--light);
+            font-weight: 500;
+        }
+        
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 15px 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            color: var(--light);
+            font-size: 1rem;
+        }
+        
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+        
+        .feedback-comments {
+            max-height: 500px;
+            overflow-y: auto;
+            padding-right: 20px;
+        }
+        
+        .feedback-comment {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .comment-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+        
+        .comment-author {
+            font-weight: 600;
+            color: var(--light);
+        }
+        
+        .comment-date {
+            color: #64748b;
+            font-size: 0.9rem;
+        }
+        
+        .comment-text {
+            color: #cbd5e1;
+            line-height: 1.6;
+        }
+        
+        /* About Section */
+        .about-section {
+            margin: 100px 0;
+        }
+        
+        .about-content {
+            background: var(--glass);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            border-radius: 30px;
+            padding: 60px;
+            text-align: center;
+        }
+        
+        /* Social Links */
+        .social-links-section {
+            margin: 100px 0;
+            text-align: center;
+        }
+        
+        .social-grid {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-top: 40px;
+        }
+        
+        .social-card {
+            background: var(--glass);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            border-radius: 15px;
+            padding: 25px;
+            width: 200px;
+            transition: all 0.3s;
+        }
+        
+        .social-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary);
+        }
+        
+        .social-icon {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            color: var(--primary);
+        }
+        
+        /* Mobile App Section */
+        .mobile-app-section {
+            margin: 100px 0;
+            background: var(--gradient);
+            border-radius: 30px;
+            padding: 60px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .app-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+        
+        .app-store-btn, .play-store-btn {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px 30px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 15px;
+            color: white;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+        
+        .app-store-btn:hover, .play-store-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-5px);
+        }
+        
+        /* Footer */
+        footer {
+            margin-top: 100px;
+            padding-top: 80px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 40px;
+            margin-bottom: 60px;
+        }
+        
+        .social-links {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+        
+        .social-link {
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--light);
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+        
+        .social-link:hover {
+            background: var(--gradient);
+            transform: translateY(-5px);
+        }
+        
+        .copyright {
+            text-align: center;
+            padding: 30px 0;
+            color: #64748b;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .creator-credit {
+            font-size: 1.1rem;
+            margin-top: 10px;
+            color: var(--accent);
+        }
+        
+        /* Search Bar */
+        .search-container {
+            max-width: 600px;
+            margin: 40px auto;
+            position: relative;
+        }
+        
+        .search-bar {
+            width: 100%;
+            padding: 20px 30px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 50px;
+            color: var(--light);
+            font-size: 1.1rem;
+            backdrop-filter: blur(10px);
+        }
+        
+        .search-bar:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 30px rgba(37, 99, 235, 0.3);
+        }
+        
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(5px);
+            z-index: 2000;
+            padding: 20px;
+            overflow-y: auto;
+        }
+        
+        .modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal-content {
+            background: var(--dark);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            max-width: 1200px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+            animation: modalSlideIn 0.3s ease-out;
+        }
+        
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .modal-header {
+            padding: 25px 30px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            background: var(--dark);
+            z-index: 1;
+        }
+        
+        .modal-title {
+            font-size: 2rem;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .close-modal {
+            background: none;
+            border: none;
+            color: var(--light);
+            font-size: 24px;
+            cursor: pointer;
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+        }
+        
+        .close-modal:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        .modal-body {
+            padding: 30px;
+        }
+        
+        /* Animations */
+        .animate-on-scroll {
+            opacity: 0;
+            transform: translateY(50px);
+            transition: all 0.8s ease-out;
+        }
+        
+        .animate-on-scroll.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 1200px) {
+            .main-title {
+                font-size: 4.5rem;
+            }
+        }
+        
+        @media (max-width: 992px) {
+            .main-title {
+                font-size: 3.5rem;
+            }
+            
+            .nav-links, .user-menu {
+                display: none;
+            }
+            
+            .mobile-menu-btn {
+                display: block;
+            }
+            
+            .hero-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .categories-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .projects-grid {
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            }
+            
+            .feedback-section {
+                padding: 40px 20px;
+            }
+            
+            .about-content {
+                padding: 40px 20px;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .main-title {
+                font-size: 2.8rem;
+            }
+            
+            .hero {
+                padding: 150px 0 80px;
+            }
+            
+            .mobile-app-section {
+                padding: 40px 20px;
+            }
+            
+            .app-buttons {
+                flex-direction: column;
+            }
+            
+            .section-title {
+                font-size: 2rem;
+            }
+            
+            .stat-number {
+                font-size: 2.5rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .main-title {
+                font-size: 2.2rem;
+            }
+            
+            .hero-description {
+                font-size: 1.2rem;
+            }
+            
+            .section-title {
+                font-size: 1.8rem;
+            }
+            
+            .category-box {
+                padding: 20px;
+            }
+            
+            .project-card {
+                padding: 15px;
+            }
+            
+            .project-actions {
+                flex-direction: column;
+            }
+        }
+        
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: var(--darker);
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: var(--gradient);
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Animated Background -->
+    <div class="particles" id="particles"></div>
+    
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-content">
+                <a href="#" class="logo">
+                    <div class="logo-icon">⚡</div>
+                    <div class="logo-text">CAT CPN</div>
+                </a>
+                
+                <div class="nav-links">
+                    <a href="#home" class="nav-link active">
+                        <i class="fas fa-home"></i> Home
+                    </a>
+                    <a href="#about" class="nav-link">
+                        <i class="fas fa-info-circle"></i> About
+                    </a>
+                    <a href="#projects" class="nav-link">
+                        <i class="fas fa-th-large"></i> Projects
+                    </a>
+                    <a href="#feedback" class="nav-link">
+                        <i class="fas fa-comments"></i> Feedback
+                    </a>
+                    <a href="#contact" class="nav-link">
+                        <i class="fas fa-headset"></i> Contact
+                    </a>
+                </div>
+                
+                <div class="user-menu">
+                    <button class="cta-button" onclick="showAuthModal()">
+                        <i class="fas fa-user"></i> Login
+                    </button>
+                </div>
+                
+                <button class="mobile-menu-btn" id="mobileMenuBtn">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+        </div>
+        
+        <!-- Mobile Menu -->
+        <div class="mobile-menu" id="mobileMenu" style="display: none;">
+            <div class="container">
+                <div style="display: flex; flex-direction: column; gap: 20px;">
+                    <a href="#home" class="nav-link active">
+                        <i class="fas fa-home"></i> Home
+                    </a>
+                    <a href="#about" class="nav-link">
+                        <i class="fas fa-info-circle"></i> About
+                    </a>
+                    <a href="#projects" class="nav-link">
+                        <i class="fas fa-th-large"></i> Projects
+                    </a>
+                    <a href="#feedback" class="nav-link">
+                        <i class="fas fa-comments"></i> Feedback
+                    </a>
+                    <a href="#contact" class="nav-link">
+                        <i class="fas fa-headset"></i> Contact
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+    
+    <!-- Hero Section -->
+    <section class="hero" id="home">
+        <div class="container">
+            <div class="hero-content">
+                <div class="hero-badge animate-on-scroll">
+                    <i class="fas fa-bolt"></i> YOUR ULTIMATE TECH & ENTERTAINMENT HUB
+                </div>
+                
+                <h1 class="main-title animate-on-scroll">
+                    Welcome to <span>CAT CPN</span>
+                </h1>
+                
+                <p class="hero-description animate-on-scroll">
+                    A comprehensive digital platform dedicated to empowering tech enthusiasts, developers, 
+                    and content creators from around the world. Whether you're looking to deploy your first 
+                    WhatsApp bot, explore cutting-edge software tools, discover the latest movies and entertainment, 
+                    or learn new programming skills, CAT CPN has everything you need in one place.
+                </p>
+                
+                <!-- Search Bar -->
+                <div class="search-container animate-on-scroll">
+                    <input type="text" class="search-bar" placeholder="Search projects, tools, or services...">
+                    <button class="cta-button" style="position: absolute; right: 10px; top: 10px; padding: 12px 25px;">
+                        <i class="fas fa-search"></i> Search
+                    </button>
+                </div>
+                
+                <div class="hero-buttons animate-on-scroll">
+                    <button class="cta-button" onclick="scrollToSection('projects')">
+                        <i class="fas fa-rocket"></i> Explore Projects
+                    </button>
+                    <button class="cta-button" onclick="scrollToSection('about')" style="background: rgba(255,255,255,0.1);">
+                        <i class="fas fa-info-circle"></i> Learn More
+                    </button>
+                    <button class="cta-button" onclick="showFeedbackModal()" style="background: rgba(255,255,255,0.1);">
+                        <i class="fas fa-comment"></i> Give Feedback
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Stats Section -->
+    <section class="stats-section">
+        <div class="container">
+            <h2 class="section-title animate-on-scroll">📊 Real-time Statistics</h2>
+            <p class="hero-description animate-on-scroll" style="text-align: center; margin-bottom: 50px;">
+                Live data from CAT-CPN-GO repository and platform
+            </p>
+            
+            <div class="stats-grid">
+                <div class="stat-card animate-on-scroll">
+                    <div class="stat-icon">
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <div class="stat-number" id="starsCount">329</div>
+                    <div class="stat-label">Stars</div>
+                </div>
+                
+                <div class="stat-card animate-on-scroll">
+                    <div class="stat-icon">
+                        <i class="fas fa-code-branch"></i>
+                    </div>
+                    <div class="stat-number" id="forksCount">1273</div>
+                    <div class="stat-label">Forks</div>
+                </div>
+                
+                <div class="stat-card animate-on-scroll">
+                    <div class="stat-icon">
+                        <i class="fas fa-eye"></i>
+                    </div>
+                    <div class="stat-number" id="watchersCount">329</div>
+                    <div class="stat-label">Watchers</div>
+                </div>
+                
+                <div class="stat-card animate-on-scroll">
+                    <div class="stat-icon">
+                        <i class="fas fa-bug"></i>
+                    </div>
+                    <div class="stat-number" id="issuesCount">27</div>
+                    <div class="stat-label">Issues</div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Categories Section -->
+    <section class="categories-section" id="projects">
+        <div class="container">
+            <h2 class="section-title animate-on-scroll">📦 Project Categories</h2>
+            <p class="hero-description animate-on-scroll" style="text-align: center; margin-bottom: 50px;">
+                Browse our projects and services by category
+            </p>
+            
+            <div class="categories-grid">
+                <!-- All Items Category -->
+                <div class="category-box animate-on-scroll" onclick="filterProjects('all')">
+                    <div class="category-header">
+                        <div class="category-icon">
+                            <i class="fas fa-boxes"></i>
+                        </div>
+                        <div class="category-info">
+                            <h3>All Items</h3>
+                            <div class="category-count">26 Items Available</div>
+                        </div>
+                    </div>
+                    <p style="color: #cbd5e1; line-height: 1.6; margin-bottom: 20px;">
+                        Complete collection of all our projects and services including GitHub repositories, 
+                        websites, web services, mobile apps, and collaborations.
+                    </p>
+                </div>
+                
+                <!-- GitHub Repositories Category -->
+                <div class="category-box animate-on-scroll" onclick="filterProjects('github')">
+                    <div class="category-header">
+                        <div class="category-icon">
+                            <i class="fab fa-github"></i>
+                        </div>
+                        <div class="category-info">
+                            <h3>GitHub Repositories</h3>
+                            <div class="category-count">1 Repository</div>
+                        </div>
+                    </div>
+                    <p style="color: #cbd5e1; line-height: 1.6; margin-bottom: 20px;">
+                        Explore our open-source projects and repositories on GitHub. 
+                        Contribute, fork, or star our projects.
+                    </p>
+                </div>
+                
+                <!-- Websites Category -->
+                <div class="category-box animate-on-scroll" onclick="filterProjects('websites')">
+                    <div class="category-header">
+                        <div class="category-icon">
+                            <i class="fas fa-globe"></i>
+                        </div>
+                        <div class="category-info">
+                            <h3>Websites</h3>
+                            <div class="category-count">14 Websites</div>
+                        </div>
+                    </div>
+                    <p style="color: #cbd5e1; line-height: 1.6; margin-bottom: 20px;">
+                        Collection of our web platforms including streaming sites, downloaders, 
+                        AI tools, and utility websites.
+                    </p>
+                </div>
+                
+                <!-- Web Services Category -->
+                <div class="category-box animate-on-scroll" onclick="filterProjects('services')">
+                    <div class="category-header">
+                        <div class="category-icon">
+                            <i class="fas fa-cogs"></i>
+                        </div>
+                        <div class="category-info">
+                            <h3>Web Services</h3>
+                            <div class="category-count">3 Services</div>
+                        </div>
+                    </div>
+                    <p style="color: #cbd5e1; line-height: 1.6; margin-bottom: 20px;">
+                        Professional services including bot deployment, website development, 
+                        and custom WhatsApp bot creation.
+                    </p>
+                </div>
+                
+                <!-- Mobile Apps Category -->
+                <div class="category-box animate-on-scroll" onclick="filterProjects('mobile')">
+                    <div class="category-header">
+                        <div class="category-icon">
+                            <i class="fas fa-mobile-alt"></i>
+                        </div>
+                        <div class="category-info">
+                            <h3>Mobile Apps</h3>
+                            <div class="category-count">1 App</div>
+                        </div>
+                    </div>
+                    <p style="color: #cbd5e1; line-height: 1.6; margin-bottom: 20px;">
+                        Get access to our mobile applications for Android devices. 
+                        Enhanced experience on the go.
+                    </p>
+                </div>
+                
+                <!-- Collaborations Category -->
+                <div class="category-box animate-on-scroll" onclick="filterProjects('collaborations')">
+                    <div class="category-header">
+                        <div class="category-icon">
+                            <i class="fas fa-handshake"></i>
+                        </div>
+                        <div class="category-info">
+                            <h3>Collaborations</h3>
+                            <div class="category-count">7 Collaborations</div>
+                        </div>
+                    </div>
+                    <p style="color: #cbd5e1; line-height: 1.6; margin-bottom: 20px;">
+                        Partner projects and collaborations with other tech creators 
+                        and organizations in the community.
+                    </p>
+                </div>
+            </div>
+            
+            <!-- Projects Grid -->
+            <div class="projects-grid" id="projectsGrid">
+                <!-- Projects will be loaded here dynamically -->
+            </div>
+        </div>
+    </section>
+    
+    <!-- About Section -->
+    <section class="about-section" id="about">
+        <div class="container">
+            <h2 class="section-title animate-on-scroll">About CAT CPN</h2>
+            <div class="about-content animate-on-scroll">
+                <h3 style="font-size: 2rem; margin-bottom: 30px; color: var(--light);">
+                    Your Ultimate Tech, Tutorials & Entertainment Hub
+                </h3>
+                <p style="color: #cbd5e1; line-height: 1.8; margin-bottom: 30px; font-size: 1.1rem;">
+                    CAT CPN is a comprehensive digital platform dedicated to empowering tech enthusiasts, 
+                    developers, and content creators from around the world. Whether you're looking to deploy 
+                    your first WhatsApp bot, explore cutting-edge software tools, discover the latest movies 
+                    and entertainment, or learn new programming skills, CAT CPN has everything you need in one place.
+                </p>
+                
+                <div style="background: rgba(255, 255, 255, 0.05); padding: 30px; border-radius: 15px; margin-top: 40px;">
+                    <h4 style="color: var(--accent); margin-bottom: 20px; font-size: 1.5rem;">
+                        <i class="fas fa-user"></i> About the Creator
+                    </h4>
+                    <p style="color: #cbd5e1; line-height: 1.8;">
+                        CAT CPN is proudly created and maintained by <strong>Nelson Oundo</strong>, a passionate 
+                        tech enthusiast and developer based in Uganda. With a deep love for technology and innovation, 
+                        Nelson has built this platform to share valuable resources, tutorials, and tools with the 
+                        global tech community. His mission is to make technology accessible to everyone, breaking 
+                        down complex concepts into easy-to-understand guides and providing practical solutions 
+                        that empower users to build, create, and innovate.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Feedback Section -->
+    <section class="feedback-section" id="feedback">
+        <div class="container">
+            <h2 class="section-title animate-on-scroll">💬 Community Feedback</h2>
+            <p class="hero-description animate-on-scroll" style="text-align: center; margin-bottom: 50px;">
+                We value your opinion! Share your thoughts about our website, tools, and services.
+            </p>
+            
+            <div class="feedback-form animate-on-scroll">
+                <h3 style="color: var(--light); margin-bottom: 30px; font-size: 1.5rem;">
+                    <i class="fas fa-comment-medical"></i> Share Your Feedback
+                </h3>
+                <form id="feedbackForm">
+                    <div class="form-group">
+                        <label for="name">Your name *</label>
+                        <input type="text" id="name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="feedback">Your feedback or comments *</label>
+                        <textarea id="feedback" rows="4" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="image">Profile Picture (Optional)</label>
+                        <input type="file" id="image" accept="image/*">
+                    </div>
+                    <button type="submit" class="cta-button" style="width: 100%;">
+                        <i class="fas fa-paper-plane"></i> Submit Feedback
+                    </button>
+                </form>
+            </div>
+            
+            <h3 style="color: var(--light); margin: 50px 0 30px; font-size: 1.5rem;">
+                <i class="fas fa-comments"></i> Community Feedback (41)
+            </h3>
+            
+            <div class="feedback-comments animate-on-scroll" id="feedbackComments">
+                <!-- Feedback comments will be loaded here -->
+            </div>
+        </div>
+    </section>
+    
+    <!-- Social Links Section -->
+    <section class="social-links-section" id="contact">
+        <div class="container">
+            <h2 class="section-title animate-on-scroll">🌐 Connect With Us</h2>
+            <p class="hero-description animate-on-scroll" style="text-align: center; margin-bottom: 50px;">
+                Follow us on social media for updates and content
+            </p>
+            
+            <div class="social-grid">
+                <div class="social-card animate-on-scroll">
+                    <div class="social-icon">
+                        <i class="fab fa-whatsapp"></i>
+                    </div>
+                    <h3>WhatsApp Channel</h3>
+                    <p style="color: #94a3b8; margin-top: 10px;">Join our channel</p>
+                </div>
+                
+                <div class="social-card animate-on-scroll">
+                    <div class="social-icon">
+                        <i class="fab fa-youtube"></i>
+                    </div>
+                    <h3>YouTube</h3>
+                    <p style="color: #94a3b8; margin-top: 10px;">Subscribe for tutorials</p>
+                </div>
+                
+                <div class="social-card animate-on-scroll">
+                    <div class="social-icon">
+                        <i class="fab fa-instagram"></i>
+                    </div>
+                    <h3>Instagram</h3>
+                    <p style="color: #94a3b8; margin-top: 10px;">Follow for updates</p>
+                </div>
+                
+                <div class="social-card animate-on-scroll">
+                    <div class="social-icon">
+                        <i class="fab fa-tiktok"></i>
+                    </div>
+                    <h3>TikTok</h3>
+                    <p style="color: #94a3b8; margin-top: 10px;">Short tech videos</p>
+                </div>
+                
+                <div class="social-card animate-on-scroll">
+                    <div class="social-icon">
+                        <i class="fab fa-github"></i>
+                    </div>
+                    <h3>GitHub</h3>
+                    <p style="color: #94a3b8; margin-top: 10px;">Open source projects</p>
+                </div>
+                
+                <div class="social-card animate-on-scroll">
+                    <div class="social-icon">
+                        <i class="fab fa-telegram"></i>
+                    </div>
+                    <h3>Telegram</h3>
+                    <p style="color: #94a3b8; margin-top: 10px;">Join our group</p>
+                </div>
+                
+                <div class="social-card animate-on-scroll">
+                    <div class="social-icon">
+                        <i class="fab fa-twitter"></i>
+                    </div>
+                    <h3>X Twitter</h3>
+                    <p style="color: #94a3b8; margin-top: 10px;">Follow for news</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Mobile App Section -->
+    <section class="mobile-app-section" id="apps">
+        <div class="container">
+            <h2 style="font-size: 2.5rem; margin-bottom: 20px; color: white;">
+                Get the CAT CPN Android App
+            </h2>
+            <p style="font-size: 1.2rem; margin-bottom: 30px; opacity: 0.9; color: white;">
+                Install our app for more features and better experience
+            </p>
+            
+            <div class="app-buttons">
+                <a href="#" class="play-store-btn">
+                    <i class="fab fa-google-play" style="font-size: 2rem;"></i>
+                    <div style="text-align: left;">
+                        <span style="font-size: 0.8rem; opacity: 0.8;">Get it on</span>
+                        <strong style="font-size: 1.2rem;">Google Play</strong>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div>
+                    <div class="logo" style="margin-bottom: 20px;">
+                        <div class="logo-icon">⚡</div>
+                        <div class="logo-text">CAT CPN</div>
+                    </div>
+                    <p style="color: #94a3b8; margin-bottom: 20px;">
+                        Your trusted platform for tech tutorials, bot deployment tools, 
+                        and entertainment content.
+                    </p>
+                    <div class="social-links">
+                        <a href="#" class="social-link">
+                            <i class="fab fa-whatsapp"></i>
+                        </a>
+                        <a href="#" class="social-link">
+                            <i class="fab fa-youtube"></i>
+                        </a>
+                        <a href="#" class="social-link">
+                            <i class="fab fa-github"></i>
+                        </a>
+                        <a href="#" class="social-link">
+                            <i class="fab fa-telegram"></i>
+                        </a>
+                        <a href="#" class="social-link">
+                            <i class="fab fa-twitter"></i>
+                        </a>
+                    </div>
+                </div>
+                
+                <div>
+                    <h3 style="margin-bottom: 20px; color: var(--light);">Quick Links</h3>
+                    <ul style="list-style: none; color: #94a3b8;">
+                        <li style="margin-bottom: 10px;">
+                            <a href="#about" style="color: #94a3b8; text-decoration: none;">
+                                <i class="fas fa-chevron-right"></i> About Us
+                            </a>
+                        </li>
+                        <li style="margin-bottom: 10px;">
+                            <a href="#" style="color: #94a3b8; text-decoration: none;">
+                                <i class="fas fa-chevron-right"></i> Privacy Policy
+                            </a>
+                        </li>
+                        <li style="margin-bottom: 10px;">
+                            <a href="#" style="color: #94a3b8; text-decoration: none;">
+                                <i class="fas fa-chevron-right"></i> Terms of Service
+                            </a>
+                        </li>
+                        <li style="margin-bottom: 10px;">
+                            <a href="#contact" style="color: #94a3b8; text-decoration: none;">
+                                <i class="fas fa-chevron-right"></i> Contact Us
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h3 style="margin-bottom: 20px; color: var(--light);">Legal</h3>
+                    <ul style="list-style: none; color: #94a3b8;">
+                        <li style="margin-bottom: 10px;">
+                            <a href="#" style="color: #94a3b8; text-decoration: none;">
+                                <i class="fas fa-chevron-right"></i> Privacy Policy
+                            </a>
+                        </li>
+                        <li style="margin-bottom: 10px;">
+                            <a href="#" style="color: #94a3b8; text-decoration: none;">
+                                <i class="fas fa-chevron-right"></i> Terms of Service
+                            </a>
+                        </li>
+                        <li style="margin-bottom: 10px;">
+                            <a href="#" style="color: #94a3b8; text-decoration: none;">
+                                <i class="fas fa-chevron-right"></i> Cookie Policy
+                            </a>
+                        </li>
+                        <li style="margin-bottom: 10px;">
+                            <a href="#" style="color: #94a3b8; text-decoration: none;">
+                                <i class="fas fa-chevron-right"></i> DMCA
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h3 style="margin-bottom: 20px; color: var(--light);">Contact</h3>
+                    <p style="color: #94a3b8; margin-bottom: 10px;">
+                        <i class="fas fa-user"></i> Mr Nelson Oundo
+                    </p>
+                    <p style="color: #94a3b8; margin-bottom: 10px;">
+                        <i class="fas fa-envelope"></i> catphoenix6@gmail.com
+                    </p>
+                    <p style="color: #94a3b8;">
+                        <i class="fas fa-map-marker-alt"></i> Uganda
+                    </p>
+                </div>
+            </div>
+            
+            <div class="copyright">
+                <p>© 2025 CAT CPN TECH. All rights reserved.</p>
+                <p class="creator-credit">
+                    <i class="fas fa-code"></i> Created by <strong>Nelson Oundo</strong> from Uganda
+                </p>
+                <p style="margin-top: 10px; font-size: 0.9rem; color: #94a3b8;">
+                    24/7 Support Available • Updates Daily • Premium Quality
+                </p>
+            </div>
+        </div>
+    </footer>
+    
+    <!-- Feedback Modal -->
+    <div class="modal" id="feedbackModal">
+        <div class="modal-content" style="max-width: 600px;">
+            <div class="modal-header">
+                <h2 class="modal-title"><i class="fas fa-comment"></i> Share Feedback</h2>
+                <button class="close-modal" onclick="closeModal('feedbackModal')">×</button>
+            </div>
+            <div class="modal-body">
+                <form id="modalFeedbackForm">
+                    <div class="form-group">
+                        <label for="modalName">Your name *</label>
+                        <input type="text" id="modalName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="modalFeedback">Your feedback or comments *</label>
+                        <textarea id="modalFeedback" rows="4" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="modalImage">Profile Picture (Optional)</label>
+                        <input type="file" id="modalImage" accept="image/*">
+                    </div>
+                    <button type="submit" class="cta-button" style="width: 100%;">
+                        <i class="fas fa-paper-plane"></i> Submit Feedback
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Project Details Modal -->
+    <div class="modal" id="projectModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title" id="projectModalTitle">Project Details</h2>
+                <button class="close-modal" onclick="closeModal('projectModal')">×</button>
+            </div>
+            <div class="modal-body">
+                <div id="projectModalContent">
+                    <!-- Project details will be loaded here -->
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Sample Projects Data
+        const projectsData = [
+            // GitHub Repositories
+            {
+                id: 1,
+                title: "CAT CPN GO BOT",
+                category: "github",
+                description: "Cat cpn Smart assistant for tech, tools & APIs. Web solutions & automation. Available 24/7 for your digital needs",
+                tags: ["WhatsApp Bot", "JavaScript"],
+                price: "10000 ugx",
+                type: "GitHub Repositories"
+            },
+            
+            // Websites
+            {
+                id: 2,
+                title: "18+ site",
+                category: "websites",
+                description: "Stream unlimited hot neli films",
+                tags: ["Streaming"],
+                price: "Free",
+                type: "Websites"
+            },
+            {
+                id: 3,
+                title: "Cat cpn Go.",
+                category: "websites",
+                description: "Download YouTube videos and songs with streaming capabilities",
+                tags: ["YouTube", "Downloader"],
+                price: "Free",
+                type: "Websites"
+            },
+            {
+                id: 4,
+                title: "Cat cpn movies site.",
+                category: "websites",
+                description: "Best streaming site with downloading capabilities",
+                tags: ["Movies", "Streaming"],
+                price: "Free",
+                type: "Websites"
+            },
+            {
+                id: 5,
+                title: "Cat cpn ncs songs",
+                category: "websites",
+                description: "Get all free no copyright songs, you can download or stream.",
+                tags: ["Music", "Free"],
+                price: "Free",
+                type: "Websites"
+            },
+            {
+                id: 6,
+                title: "Cat cpn static host",
+                category: "websites",
+                description: "Host your website for free",
+                tags: ["Hosting", "Free"],
+                price: "Free",
+                type: "Websites"
+            },
+            {
+                id: 7,
+                title: "Catcpn X9 Ai.",
+                category: "websites",
+                description: "Best ai model that can do anything",
+                tags: ["AI", "Tools"],
+                price: "Free",
+                type: "Websites"
+            },
+            {
+                id: 8,
+                title: "Contact Us Anonymously",
+                category: "websites",
+                description: "Send us any message anonymously",
+                tags: ["Contact", "Anonymous"],
+                price: "Free",
+                type: "Websites"
+            },
+            {
+                id: 9,
+                title: "File to URL Converter",
+                category: "websites",
+                description: "Convert files to shareable URLs",
+                tags: ["File", "URL"],
+                price: "Free",
+                type: "Websites"
+            },
+            {
+                id: 10,
+                title: "Jagure Holdings Shop",
+                category: "websites",
+                description: "Online shopping platform for various products and services",
+                tags: ["E-commerce", "Shopping"],
+                price: "Free",
+                type: "Websites"
+            },
+            {
+                id: 11,
+                title: "Link shortener.",
+                category: "websites",
+                description: "Change your long url to short one",
+                tags: ["URL", "Shortener"],
+                price: "Free",
+                type: "Websites"
+            },
+            {
+                id: 12,
+                title: "Live TV Web.",
+                category: "websites",
+                description: "Watch live television channels online with CAT CPN TV",
+                tags: ["TV", "Live"],
+                price: "Free",
+                type: "Websites"
+            },
+            {
+                id: 13,
+                title: "My Portfolio",
+                category: "websites",
+                description: "Simply portfolio by cat cpn tech",
+                tags: ["Portfolio", "Personal"],
+                price: "Free",
+                type: "Websites"
+            },
+            {
+                id: 14,
+                title: "Payment Portal",
+                category: "websites",
+                description: "Online payment processing system",
+                tags: ["Payment", "Portal"],
+                price: "Free",
+                type: "Websites"
+            },
+            {
+                id: 15,
+                title: "Social Media Downloader",
+                category: "websites",
+                description: "Social media downloader via links to video",
+                tags: ["Downloader", "Social Media"],
+                price: "Free",
+                type: "Websites"
+            },
+            
+            // Web Services
+            {
+                id: 16,
+                title: "Bot Deployment",
+                category: "services",
+                description: "Professional bot deployment services on various platforms",
+                tags: ["Deployment", "Bot"],
+                price: "8000-250000 UGX",
+                type: "Web Services"
+            },
+            {
+                id: 17,
+                title: "Website Development",
+                category: "services",
+                description: "Professional website development services tailored to your needs",
+                tags: ["Development", "Website"],
+                price: "1000-10000 UGX",
+                type: "Web Services"
+            },
+            {
+                id: 18,
+                title: "WhatsApp Bot Development",
+                category: "services",
+                description: "Custom WhatsApp bot development with advanced features and automation",
+                tags: ["Bot", "WhatsApp"],
+                price: "8000-300000 UGX",
+                type: "Web Services"
+            },
+            
+            // Mobile Apps
+            {
+                id: 19,
+                title: "CAT CPN APPS STORE",
+                category: "mobile",
+                description: "Get all cat cpn apps in one place for Android",
+                tags: ["Android", "Shopping"],
+                price: "Free",
+                type: "Mobile Apps"
+            },
+            
+            // Collaborations
+            {
+                id: 20,
+                title: "PRAITECH - Buddy XTR",
+                category: "collaborations",
+                description: "Buddy XTR Project by praitech",
+                tags: ["Collaboration", "Bot"],
+                price: "Free",
+                type: "Collaborations"
+            },
+            {
+                id: 21,
+                title: "REMI BOT",
+                category: "collaborations",
+                description: "Official resources by REMI BOT",
+                tags: ["Automation", "Bot"],
+                price: "Free",
+                type: "Collaborations"
+            },
+            {
+                id: 22,
+                title: "JUSTECH",
+                category: "collaborations",
+                description: "Official resources by JusTech",
+                tags: ["Entertainment", "Movies"],
+                price: "Free",
+                type: "Collaborations"
+            },
+            {
+                id: 23,
+                title: "PRAISE TECH",
+                category: "collaborations",
+                description: "Advanced technology services and solutions",
+                tags: ["Tech", "API"],
+                price: "Free",
+                type: "Collaborations"
+            },
+            {
+                id: 24,
+                title: "TRACK TECH",
+                category: "collaborations",
+                description: "Official resources from Track Tech Inc",
+                tags: ["YouTube", "API"],
+                price: "Free",
+                type: "Collaborations"
+            },
+            {
+                id: 25,
+                title: "PRECIO PROJECTS",
+                category: "collaborations",
+                description: "Precio MD and related projects",
+                tags: ["Bot", "API"],
+                price: "Free",
+                type: "Collaborations"
+            },
+            {
+                id: 26,
+                title: "PHOENIX",
+                category: "collaborations",
+                description: "COD Mr Beast project with comprehensive features",
+                tags: ["Bot", "AI"],
+                price: "Free",
+                type: "Collaborations"
+            }
+        ];
+
+        // Feedback Data
+        const feedbackData = [
+            { name: "Nyc", comment: "So sir , am a young developer and am basically interested in web development , do you know of sites that let you host your web for free", date: "Dec 17, 2025, 11:39 PM" },
+            { name: "Chubby", comment: "It's very nice", date: "Dec 16, 2025, 04:39 PM" },
+            { name: "AWOOWE", comment: "hi", date: "Dec 14, 2025, 11:31 PM" },
+            { name: "AWOOWE", comment: "hhhh", date: "Dec 14, 2025, 11:31 PM" },
+            { name: "William", comment: "How to pair", date: "Dec 12, 2025, 03:23 PM" },
+            { name: "McMajesty_Officiall🇬🇭🇺🇸", comment: "Hi team, Good morning I trust you'al doing well! Please I have problem with my Heroku account, when I tried to login they said 'couldn't find the user'. I have been tried several times but here yet they still give me the same feedback!!😳😌💔😭", date: "Dec 10, 2025, 07:41 PM" },
+            { name: "Frontier", comment: "L love the movie stream but l believe that y'all should add the phonecast cos sometimes l have to cast to my tv cos l can't always be watching on my phone you see so can y'all please add the casting feature which l think would be really grt", date: "Dec 9, 2025, 05:34 PM" },
+            { name: "Hasheem", comment: "Best one", date: "Dec 9, 2025, 12:31 PM" },
+            { name: "Tabo", comment: "⭐️⭐️⭐️⭐️⭐️", date: "Dec 9, 2025, 06:26 AM" },
+            { name: "Taizon", comment: "Awesome", date: "Dec 8, 2025, 05:22 AM" },
+            { name: "Taizon", comment: "Good", date: "Dec 7, 2025, 12:50 PM" },
+            { name: "Paul", comment: "Great", date: "Dec 1, 2025, 11:46 AM" },
+            { name: "Alfred mutharimi", comment: "Very good", date: "Dec 1, 2025, 12:13 AM" },
+            { name: "Desh", comment: "Very nice", date: "Nov 24, 2025, 11:07 AM" },
+            { name: "Collo blue", comment: "Good", date: "Nov 24, 2025, 05:42 AM" },
+            { name: "Mulax Prime", comment: "I just wanted to express my sincere gratitude for creating the CAT CPN bot. It's been incredibly helpful and well-designed, and I truly appreciate the time, effort, and expertise that went into building it. Thank you for making such a valuable tool available to the community! Also, shoutout for the amazing apps like CAT Praise, Movie Site, and others — they've been a huge help to Mulax Prime. Brother, your work is making a real difference. Let's keep pushing forward and growing the world of tech together!", date: "Nov 10, 2025, 08:40 PM" }
+        ];
+
+        // Initialize the page
+        document.addEventListener('DOMContentLoaded', () => {
+            createParticles();
+            initScrollAnimations();
+            initMobileMenu();
+            loadProjects();
+            loadFeedback();
+            initSearch();
+            
+            // Update stats with animation
+            animateStats();
+            
+            // Initialize feedback form
+            initFeedbackForm();
+            
+            // Show welcome notification
+            showNotification("🚀 Welcome to CAT CPN! Created by Nelson Oundo");
+            
+            // Update active nav link on scroll
+            window.addEventListener('scroll', updateActiveNavLink);
+        });
+
+        // Create animated particles
+        function createParticles() {
+            const particlesContainer = document.getElementById('particles');
+            for (let i = 0; i < 30; i++) {
+                const particle = document.createElement('div');
+                particle.style.cssText = `
+                    position: absolute;
+                    width: ${Math.random() * 5 + 1}px;
+                    height: ${Math.random() * 5 + 1}px;
+                    background: rgba(${Math.random() * 100 + 100}, ${Math.random() * 100 + 100}, 255, 0.5);
+                    border-radius: 50%;
+                    left: ${Math.random() * 100}%;
+                    top: ${Math.random() * 100}%;
+                    animation: float ${Math.random() * 20 + 10}s infinite linear;
+                    animation-delay: ${Math.random() * 5}s;
+                    opacity: ${Math.random() * 0.5 + 0.1};
+                `;
+                particlesContainer.appendChild(particle);
+            }
+            
+            // Add CSS for float animation
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes float {
+                    0% { transform: translateY(0) rotate(0deg); opacity: 0; }
+                    10% { opacity: 1; }
+                    90% { opacity: 1; }
+                    100% { transform: translateY(-100vh) rotate(360deg); opacity: 0; }
+                }
+            `;
+            document.head.appendChild(style);
+        }
+
+        // Initialize mobile menu
+        function initMobileMenu() {
+            const menuBtn = document.getElementById('mobileMenuBtn');
+            const mobileMenu = document.getElementById('mobileMenu');
+            
+            menuBtn.addEventListener('click', () => {
+                if (mobileMenu.style.display === 'block') {
+                    mobileMenu.style.display = 'none';
+                    menuBtn.innerHTML = '<i class="fas fa-bars"></i>';
+                } else {
+                    mobileMenu.style.display = 'block';
+                    menuBtn.innerHTML = '<i class="fas fa-times"></i>';
+                }
+            });
+            
+            // Close menu when clicking outside
+            document.addEventListener('click', (e) => {
+                if (!menuBtn.contains(e.target) && !mobileMenu.contains(e.target)) {
+                    mobileMenu.style.display = 'none';
+                    menuBtn.innerHTML = '<i class="fas fa-bars"></i>';
+                }
+            });
+            
+            // Close menu when clicking a link
+            mobileMenu.querySelectorAll('.nav-link').forEach(link => {
+                link.addEventListener('click', () => {
+                    mobileMenu.style.display = 'none';
+                    menuBtn.innerHTML = '<i class="fas fa-bars"></i>';
+                });
+            });
+        }
+
+        // Initialize scroll animations
+        function initScrollAnimations() {
+            const elements = document.querySelectorAll('.animate-on-scroll');
+            
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                    }
+                });
+            }, { threshold: 0.1 });
+            
+            elements.forEach(element => {
+                observer.observe(element);
+            });
+        }
+
+        // Update active nav link on scroll
+        function updateActiveNavLink() {
+            const sections = document.querySelectorAll('section[id]');
+            const scrollPos = window.scrollY + 100;
+            
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                const sectionHeight = section.clientHeight;
+                const sectionId = section.getAttribute('id');
+                
+                if (scrollPos >= sectionTop && scrollPos < sectionTop + sectionHeight) {
+                    document.querySelectorAll('.nav-link').forEach(link => {
+                        link.classList.remove('active');
+                        if (link.getAttribute('href') === `#${sectionId}`) {
+                            link.classList.add('active');
+                        }
+                    });
+                }
+            });
+        }
+
+        // Animate stats counting
+        function animateStats() {
+            const stats = [
+                { id: 'starsCount', target: 329 },
+                { id: 'forksCount', target: 1273 },
+                { id: 'watchersCount', target: 329 },
+                { id: 'issuesCount', target: 27 }
+            ];
+            
+            stats.forEach(stat => {
+                const element = document.getElementById(stat.id);
+                let current = 0;
+                const increment = stat.target / 100;
+                const timer = setInterval(() => {
+                    current += increment;
+                    if (current >= stat.target) {
+                        element.textContent = stat.target;
+                        clearInterval(timer);
+                    } else {
+                        element.textContent = Math.floor(current);
+                    }
+                }, 20);
+            });
+        }
+
+        // Load projects
+        function loadProjects(filter = 'all') {
+            const grid = document.getElementById('projectsGrid');
+            grid.innerHTML = '';
+            
+            const filteredProjects = filter === 'all' 
+                ? projectsData 
+                : projectsData.filter(project => project.category === filter);
+            
+            filteredProjects.forEach(project => {
+                const card = document.createElement('div');
+                card.className = 'project-card animate-on-scroll';
+                card.innerHTML = `
+                    <div class="project-content">
+                        <div class="project-title">
+                            <span>${project.title}</span>
+                            <span class="project-price">${project.price}</span>
+                        </div>
+                        <div style="color: #64748b; font-size: 0.9rem; margin-bottom: 10px;">
+                            ${project.type}
+                        </div>
+                        <p class="project-description">${project.description}</p>
+                        <div class="project-tags">
+                            ${project.tags.map(tag => `<span class="project-tag">${tag}</span>`).join('')}
+                        </div>
+                        <div class="project-actions">
+                            <button class="action-btn details-btn" onclick="showProjectDetails(${project.id})">
+                                <i class="fas fa-info-circle"></i> Details
+                            </button>
+                            <button class="action-btn visit-btn" onclick="visitProject(${project.id})">
+                                <i class="fas fa-external-link-alt"></i> Visit
+                            </button>
+                        </div>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+            
+            // Re-initialize scroll animations for new elements
+            setTimeout(() => {
+                initScrollAnimations();
+            }, 100);
+        }
+
+        // Filter projects by category
+        function filterProjects(category) {
+            loadProjects(category);
+            
+            // Update active category
+            document.querySelectorAll('.category-box').forEach(box => {
+                box.style.transform = 'translateY(0)';
+                box.style.borderColor = 'var(--glass-border)';
+            });
+            
+            if (category !== 'all') {
+                const activeBox = document.querySelector(`.category-box[onclick*="${category}"]`);
+                if (activeBox) {
+                    activeBox.style.transform = 'translateY(-10px)';
+                    activeBox.style.borderColor = 'var(--primary)';
+                }
+            }
+            
+            scrollToSection('projects');
+        }
+
+        // Show project details
+        function showProjectDetails(projectId) {
+            const project = projectsData.find(p => p.id === projectId);
+            if (!project) return;
+            
+            const modal = document.getElementById('projectModal');
+            const title = document.getElementById('projectModalTitle');
+            const content = document.getElementById('projectModalContent');
+            
+            title.textContent = project.title;
+            content.innerHTML = `
+                <div style="background: rgba(255, 255, 255, 0.05); padding: 30px; border-radius: 15px;">
+                    <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 20px;">
+                        <div>
+                            <h3 style="color: var(--light); margin-bottom: 10px;">${project.title}</h3>
+                            <div style="color: #64748b; font-size: 1rem;">${project.type}</div>
+                        </div>
+                        <div style="background: var(--gradient); padding: 10px 20px; border-radius: 20px; font-weight: 600;">
+                            ${project.price}
+                        </div>
+                    </div>
+                    
+                    <div style="margin-bottom: 30px;">
+                        <h4 style="color: var(--accent); margin-bottom: 10px;">Description</h4>
+                        <p style="color: #cbd5e1; line-height: 1.6;">${project.description}</p>
+                    </div>
+                    
+                    <div style="margin-bottom: 30px;">
+                        <h4 style="color: var(--accent); margin-bottom: 10px;">Features</h4>
+                        <div class="project-tags">
+                            ${project.tags.map(tag => `<span class="project-tag">${tag}</span>`).join('')}
+                        </div>
+                    </div>
+                    
+                    <div style="display: flex; gap: 15px;">
+                        <button class="action-btn visit-btn" onclick="visitProject(${project.id})" style="flex: 1;">
+                            <i class="fas fa-external-link-alt"></i> Visit Project
+                        </button>
+                        <button class="action-btn details-btn" onclick="closeModal('projectModal')" style="flex: 1;">
+                            <i class="fas fa-times"></i> Close
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        // Visit project
+        function visitProject(projectId) {
+            const project = projectsData.find(p => p.id === projectId);
+            if (!project) return;
+            
+            showNotification(`🌐 Opening ${project.title}...`);
+            // In a real app, this would redirect to the actual URL
+            // window.open(project.url, '_blank');
+            
+            closeModal('projectModal');
+        }
+
+        // Load feedback
+        function loadFeedback() {
+            const container = document.getElementById('feedbackComments');
+            container.innerHTML = '';
+            
+            feedbackData.forEach(feedback => {
+                const comment = document.createElement('div');
+                comment.className = 'feedback-comment animate-on-scroll';
+                comment.innerHTML = `
+                    <div class="comment-header">
+                        <div class="comment-author">${feedback.name}</div>
+                        <div class="comment-date">${feedback.date}</div>
+                    </div>
+                    <div class="comment-text">${feedback.comment}</div>
+                `;
+                container.appendChild(comment);
+            });
+        }
+
+        // Initialize feedback form
+        function initFeedbackForm() {
+            const form = document.getElementById('feedbackForm');
+            const modalForm = document.getElementById('modalFeedbackForm');
+            
+            form.addEventListener('submit', handleFeedbackSubmit);
+            if (modalForm) {
+                modalForm.addEventListener('submit', handleFeedbackSubmit);
+            }
+        }
+
+        function handleFeedbackSubmit(e) {
+            e.preventDefault();
+            
+            const form = e.target;
+            const name = form.querySelector('input[type="text"]').value;
+            const feedback = form.querySelector('textarea').value;
+            
+            if (!name || !feedback) {
+                showNotification('⚠️ Please fill in all required fields');
+                return;
+            }
+            
+            // Add new feedback
+            const newFeedback = {
+                name: name,
+                comment: feedback,
+                date: new Date().toLocaleString('en-US', {
+                    month: 'short',
+                    day: 'numeric',
+                    year: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                })
+            };
+            
+            feedbackData.unshift(newFeedback);
+            loadFeedback();
+            
+            // Reset form
+            form.reset();
+            
+            // Close modal if open
+            closeModal('feedbackModal');
+            
+            showNotification('✅ Thank you for your feedback!');
+        }
+
+        // Show feedback modal
+        function showFeedbackModal() {
+            document.getElementById('feedbackModal').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        // Close modal
+        function closeModal(modalId) {
+            const modal = document.getElementById(modalId);
+            modal.classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+
+        // Initialize search
+        function initSearch() {
+            const searchBar = document.querySelector('.search-bar');
+            const searchBtn = document.querySelector('.search-bar + .cta-button');
+            
+            searchBtn.addEventListener('click', () => performSearch(searchBar.value));
+            searchBar.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') performSearch(searchBar.value);
+            });
+        }
+
+        function performSearch(query) {
+            if (query.trim()) {
+                showNotification(`🔍 Searching for: "${query}"`);
+                
+                // Filter projects based on search query
+                const filtered = projectsData.filter(project => 
+                    project.title.toLowerCase().includes(query.toLowerCase()) ||
+                    project.description.toLowerCase().includes(query.toLowerCase()) ||
+                    project.tags.some(tag => tag.toLowerCase().includes(query.toLowerCase()))
+                );
+                
+                // Display search results
+                const grid = document.getElementById('projectsGrid');
+                grid.innerHTML = '';
+                
+                if (filtered.length === 0) {
+                    grid.innerHTML = `
+                        <div style="grid-column: 1 / -1; text-align: center; padding: 50px;">
+                            <i class="fas fa-search" style="font-size: 3rem; color: #64748b; margin-bottom: 20px;"></i>
+                            <h3 style="color: var(--light); margin-bottom: 10px;">No results found</h3>
+                            <p style="color: #94a3b8;">Try searching with different keywords</p>
+                        </div>
+                    `;
+                } else {
+                    filtered.forEach(project => {
+                        const card = document.createElement('div');
+                        card.className = 'project-card';
+                        card.innerHTML = `
+                            <div class="project-content">
+                                <div class="project-title">
+                                    <span>${project.title}</span>
+                                    <span class="project-price">${project.price}</span>
+                                </div>
+                                <div style="color: #64748b; font-size: 0.9rem; margin-bottom: 10px;">
+                                    ${project.type}
+                                </div>
+                                <p class="project-description">${project.description}</p>
+                                <div class="project-tags">
+                                    ${project.tags.map(tag => `<span class="project-tag">${tag}</span>`).join('')}
+                                </div>
+                                <div class="project-actions">
+                                    <button class="action-btn details-btn" onclick="showProjectDetails(${project.id})">
+                                        <i class="fas fa-info-circle"></i> Details
+                                    </button>
+                                    <button class="action-btn visit-btn" onclick="visitProject(${project.id})">
+                                        <i class="fas fa-external-link-alt"></i> Visit
+                                    </button>
+                                </div>
+                            </div>
+                        `;
+                        grid.appendChild(card);
+                    });
+                }
+                
+                scrollToSection('projects');
+            }
+        }
+
+        // Scroll to section
+        function scrollToSection(sectionId) {
+            const section = document.getElementById(sectionId);
+            if (section) {
+                window.scrollTo({
+                    top: section.offsetTop - 100,
+                    behavior: 'smooth'
+                });
+            }
+        }
+
+        // Show notification
+        function showNotification(message) {
+            // Create notification element
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 100px;
+                right: 20px;
+                background: var(--gradient);
+                color: white;
+                padding: 15px 25px;
+                border-radius: 10px;
+                box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+                z-index: 10000;
+                animation: slideInRight 0.3s ease-out;
+                max-width: 300px;
+                display: flex;
+                align-items: center;
+                gap: 10px;
+            `;
+            
+            notification.innerHTML = `
+                <i class="fas fa-info-circle"></i>
+                <div>${message}</div>
+            `;
+            
+            document.body.appendChild(notification);
+            
+            // Remove after 3 seconds
+            setTimeout(() => {
+                notification.style.animation = 'slideInRight 0.3s ease-out reverse';
+                setTimeout(() => {
+                    if (notification.parentElement) {
+                        notification.remove();
+                    }
+                }, 300);
+            }, 3000);
+            
+            // Add CSS for animation
+            if (!document.getElementById('notification-style')) {
+                const style = document.createElement('style');
+                style.id = 'notification-style';
+                style.textContent = `
+                    @keyframes slideInRight {
+                        from { transform: translateX(100%); opacity: 0; }
+                        to { transform: translateX(0); opacity: 1; }
+                    }
+                `;
+                document.head.appendChild(style);
+            }
+        }
+
+        // Show auth modal (placeholder)
+        function showAuthModal() {
+            showNotification('🔐 Login feature coming soon!');
+        }
+    </script>
+</body>
+</html>
