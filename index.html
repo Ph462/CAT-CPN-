@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CAT CPN - Tech, Tutorials & Entertainment Hub</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Load Supabase from CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.0/dist/umd/supabase.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -485,7 +487,8 @@
         }
         
         .form-group input,
-        .form-group textarea {
+        .form-group textarea,
+        .form-group select {
             width: 100%;
             padding: 15px 20px;
             background: rgba(255, 255, 255, 0.05);
@@ -496,7 +499,8 @@
         }
         
         .form-group input:focus,
-        .form-group textarea:focus {
+        .form-group textarea:focus,
+        .form-group select:focus {
             outline: none;
             border-color: var(--primary);
         }
@@ -783,6 +787,85 @@
             padding: 30px;
         }
         
+        /* Admin Panel */
+        .admin-panel {
+            display: none;
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            background: var(--dark);
+            border: 1px solid var(--glass-border);
+            border-radius: 15px;
+            padding: 20px;
+            width: 300px;
+            z-index: 1001;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+        
+        .admin-panel.active {
+            display: block;
+        }
+        
+        .admin-panel h3 {
+            color: var(--accent);
+            margin-bottom: 15px;
+            font-size: 1.2rem;
+        }
+        
+        .admin-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .admin-btn {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--light);
+            border: none;
+            padding: 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .admin-btn:hover {
+            background: rgba(37, 99, 235, 0.2);
+        }
+        
+        /* Loading Spinner */
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid rgba(255, 255, 255, 0.1);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        /* Error Message */
+        .error-message {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            margin: 20px 0;
+        }
+        
+        .error-message i {
+            color: var(--danger);
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+        
         /* Animations */
         .animate-on-scroll {
             opacity: 0;
@@ -936,6 +1019,9 @@
                 </div>
                 
                 <div class="user-menu">
+                    <button class="cta-button" onclick="toggleAdminPanel()">
+                        <i class="fas fa-user-cog"></i> Admin
+                    </button>
                     <button class="cta-button" onclick="showAuthModal()">
                         <i class="fas fa-user"></i> Login
                     </button>
@@ -971,6 +1057,25 @@
         </div>
     </nav>
     
+    <!-- Admin Panel -->
+    <div class="admin-panel" id="adminPanel">
+        <h3><i class="fas fa-cog"></i> Admin Panel</h3>
+        <div class="admin-actions">
+            <button class="admin-btn" onclick="showAddProjectModal()">
+                <i class="fas fa-plus"></i> Add Project
+            </button>
+            <button class="admin-btn" onclick="showSetupInstructions()">
+                <i class="fas fa-database"></i> Setup Database
+            </button>
+            <button class="admin-btn" onclick="refreshData()">
+                <i class="fas fa-sync"></i> Refresh Data
+            </button>
+            <button class="admin-btn" onclick="useLocalData()">
+                <i class="fas fa-desktop"></i> Use Local Data
+            </button>
+        </div>
+    </div>
+    
     <!-- Hero Section -->
     <section class="hero" id="home">
         <div class="container">
@@ -992,8 +1097,8 @@
                 
                 <!-- Search Bar -->
                 <div class="search-container animate-on-scroll">
-                    <input type="text" class="search-bar" placeholder="Search projects, tools, or services...">
-                    <button class="cta-button" style="position: absolute; right: 10px; top: 10px; padding: 12px 25px;">
+                    <input type="text" class="search-bar" placeholder="Search projects, tools, or services..." id="searchInput">
+                    <button class="cta-button" id="searchButton" style="position: absolute; right: 10px; top: 10px; padding: 12px 25px;">
                         <i class="fas fa-search"></i> Search
                     </button>
                 </div>
@@ -1048,10 +1153,10 @@
                 
                 <div class="stat-card animate-on-scroll">
                     <div class="stat-icon">
-                        <i class="fas fa-bug"></i>
+                        <i class="fas fa-comment"></i>
                     </div>
-                    <div class="stat-number" id="issuesCount">27</div>
-                    <div class="stat-label">Issues</div>
+                    <div class="stat-number" id="feedbackCount">0</div>
+                    <div class="stat-label">Feedback</div>
                 </div>
             </div>
         </div>
@@ -1074,7 +1179,7 @@
                         </div>
                         <div class="category-info">
                             <h3>All Items</h3>
-                            <div class="category-count">26 Items Available</div>
+                            <div class="category-count" id="allCount">Loading...</div>
                         </div>
                     </div>
                     <p style="color: #cbd5e1; line-height: 1.6; margin-bottom: 20px;">
@@ -1091,7 +1196,7 @@
                         </div>
                         <div class="category-info">
                             <h3>GitHub Repositories</h3>
-                            <div class="category-count">1 Repository</div>
+                            <div class="category-count" id="githubCount">Loading...</div>
                         </div>
                     </div>
                     <p style="color: #cbd5e1; line-height: 1.6; margin-bottom: 20px;">
@@ -1108,7 +1213,7 @@
                         </div>
                         <div class="category-info">
                             <h3>Websites</h3>
-                            <div class="category-count">14 Websites</div>
+                            <div class="category-count" id="websitesCount">Loading...</div>
                         </div>
                     </div>
                     <p style="color: #cbd5e1; line-height: 1.6; margin-bottom: 20px;">
@@ -1125,7 +1230,7 @@
                         </div>
                         <div class="category-info">
                             <h3>Web Services</h3>
-                            <div class="category-count">3 Services</div>
+                            <div class="category-count" id="servicesCount">Loading...</div>
                         </div>
                     </div>
                     <p style="color: #cbd5e1; line-height: 1.6; margin-bottom: 20px;">
@@ -1142,7 +1247,7 @@
                         </div>
                         <div class="category-info">
                             <h3>Mobile Apps</h3>
-                            <div class="category-count">1 App</div>
+                            <div class="category-count" id="mobileCount">Loading...</div>
                         </div>
                     </div>
                     <p style="color: #cbd5e1; line-height: 1.6; margin-bottom: 20px;">
@@ -1159,7 +1264,7 @@
                         </div>
                         <div class="category-info">
                             <h3>Collaborations</h3>
-                            <div class="category-count">7 Collaborations</div>
+                            <div class="category-count" id="collaborationsCount">Loading...</div>
                         </div>
                     </div>
                     <p style="color: #cbd5e1; line-height: 1.6; margin-bottom: 20px;">
@@ -1171,7 +1276,7 @@
             
             <!-- Projects Grid -->
             <div class="projects-grid" id="projectsGrid">
-                <!-- Projects will be loaded here dynamically -->
+                <div class="spinner" id="loadingSpinner"></div>
             </div>
         </div>
     </section>
@@ -1230,8 +1335,14 @@
                         <textarea id="feedback" rows="4" required></textarea>
                     </div>
                     <div class="form-group">
-                        <label for="image">Profile Picture (Optional)</label>
-                        <input type="file" id="image" accept="image/*">
+                        <label for="rating">Rating (1-5)</label>
+                        <select id="rating">
+                            <option value="5">⭐⭐⭐⭐⭐ (Excellent)</option>
+                            <option value="4">⭐⭐⭐⭐ (Very Good)</option>
+                            <option value="3">⭐⭐⭐ (Good)</option>
+                            <option value="2">⭐⭐ (Fair)</option>
+                            <option value="1">⭐ (Poor)</option>
+                        </select>
                     </div>
                     <button type="submit" class="cta-button" style="width: 100%;">
                         <i class="fas fa-paper-plane"></i> Submit Feedback
@@ -1240,11 +1351,11 @@
             </div>
             
             <h3 style="color: var(--light); margin: 50px 0 30px; font-size: 1.5rem;">
-                <i class="fas fa-comments"></i> Community Feedback (41)
+                <i class="fas fa-comments"></i> Recent Feedback
             </h3>
             
             <div class="feedback-comments animate-on-scroll" id="feedbackComments">
-                <!-- Feedback comments will be loaded here -->
+                <div class="spinner" id="feedbackSpinner"></div>
             </div>
         </div>
     </section>
@@ -1467,8 +1578,14 @@
                         <textarea id="modalFeedback" rows="4" required></textarea>
                     </div>
                     <div class="form-group">
-                        <label for="modalImage">Profile Picture (Optional)</label>
-                        <input type="file" id="modalImage" accept="image/*">
+                        <label for="modalRating">Rating (1-5)</label>
+                        <select id="modalRating">
+                            <option value="5">⭐⭐⭐⭐⭐ (Excellent)</option>
+                            <option value="4">⭐⭐⭐⭐ (Very Good)</option>
+                            <option value="3">⭐⭐⭐ (Good)</option>
+                            <option value="2">⭐⭐ (Fair)</option>
+                            <option value="1">⭐ (Poor)</option>
+                        </select>
                     </div>
                     <button type="submit" class="cta-button" style="width: 100%;">
                         <i class="fas fa-paper-plane"></i> Submit Feedback
@@ -1493,295 +1610,191 @@
         </div>
     </div>
     
+    <!-- Add Project Modal -->
+    <div class="modal" id="addProjectModal">
+        <div class="modal-content" style="max-width: 700px;">
+            <div class="modal-header">
+                <h2 class="modal-title"><i class="fas fa-plus"></i> Add New Project</h2>
+                <button class="close-modal" onclick="closeModal('addProjectModal')">×</button>
+            </div>
+            <div class="modal-body">
+                <form id="addProjectForm">
+                    <div class="form-group">
+                        <label for="projectTitle">Project Title *</label>
+                        <input type="text" id="projectTitle" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="projectCategory">Category *</label>
+                        <select id="projectCategory" required>
+                            <option value="github">GitHub Repositories</option>
+                            <option value="websites">Websites</option>
+                            <option value="services">Web Services</option>
+                            <option value="mobile">Mobile Apps</option>
+                            <option value="collaborations">Collaborations</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="projectDescription">Description *</label>
+                        <textarea id="projectDescription" rows="3" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="projectTags">Tags (comma separated)</label>
+                        <input type="text" id="projectTags" placeholder="e.g., WhatsApp Bot, JavaScript, Free">
+                    </div>
+                    <div class="form-group">
+                        <label for="projectPrice">Price</label>
+                        <input type="text" id="projectPrice" placeholder="e.g., Free or 10000 UGX">
+                    </div>
+                    <div class="form-group">
+                        <label for="projectURL">Project URL (Optional)</label>
+                        <input type="url" id="projectURL" placeholder="https://example.com">
+                    </div>
+                    <button type="submit" class="cta-button" style="width: 100%;">
+                        <i class="fas fa-plus"></i> Add Project
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Setup Instructions Modal -->
+    <div class="modal" id="setupModal">
+        <div class="modal-content" style="max-width: 800px;">
+            <div class="modal-header">
+                <h2 class="modal-title"><i class="fas fa-database"></i> Supabase Setup Instructions</h2>
+                <button class="close-modal" onclick="closeModal('setupModal')">×</button>
+            </div>
+            <div class="modal-body">
+                <h3>Follow these steps to set up Supabase:</h3>
+                
+                <div style="background: rgba(255, 255, 255, 0.05); padding: 20px; border-radius: 10px; margin: 20px 0;">
+                    <h4>Step 1: Go to Supabase SQL Editor</h4>
+                    <p>Log into your Supabase dashboard and go to the SQL Editor.</p>
+                </div>
+                
+                <div style="background: rgba(255, 255, 255, 0.05); padding: 20px; border-radius: 10px; margin: 20px 0;">
+                    <h4>Step 2: Run this SQL code:</h4>
+                    <pre style="background: rgba(0, 0, 0, 0.3); padding: 15px; border-radius: 8px; overflow-x: auto; color: #cbd5e1; font-size: 0.9rem;">
+-- Create projects table
+CREATE TABLE IF NOT EXISTS projects (
+    id BIGSERIAL PRIMARY KEY,
+    title TEXT NOT NULL,
+    category TEXT NOT NULL,
+    description TEXT NOT NULL,
+    tags TEXT[],
+    price TEXT,
+    url TEXT,
+    type TEXT,
+    created_at TIMESTAMP DEFAULT NOW()
+);
+
+-- Create feedback table
+CREATE TABLE IF NOT EXISTS feedback (
+    id BIGSERIAL PRIMARY KEY,
+    name TEXT NOT NULL,
+    comment TEXT NOT NULL,
+    rating INTEGER DEFAULT 5,
+    created_at TIMESTAMP DEFAULT NOW()
+);
+
+-- Enable Row Level Security (RLS)
+ALTER TABLE projects ENABLE ROW LEVEL SECURITY;
+ALTER TABLE feedback ENABLE ROW LEVEL SECURITY;
+
+-- Allow public read access
+CREATE POLICY "Allow public read access for projects" 
+ON projects FOR SELECT 
+USING (true);
+
+CREATE POLICY "Allow public read access for feedback" 
+ON feedback FOR SELECT 
+USING (true);
+
+-- Allow public to insert feedback
+CREATE POLICY "Allow public insert for feedback" 
+ON feedback FOR INSERT 
+WITH CHECK (true);
+
+-- Allow authenticated users to insert projects
+CREATE POLICY "Allow authenticated users to insert projects" 
+ON projects FOR INSERT 
+WITH CHECK (true);
+                    </pre>
+                </div>
+                
+                <div style="background: rgba(255, 255, 255, 0.05); padding: 20px; border-radius: 10px; margin: 20px 0;">
+                    <h4>Step 3: Test your connection</h4>
+                    <p>After running the SQL, click the button below to test:</p>
+                    <button class="cta-button" onclick="testSupabaseConnection()">
+                        <i class="fas fa-plug"></i> Test Connection
+                    </button>
+                    <div id="connectionTestResult" style="margin-top: 15px;"></div>
+                </div>
+                
+                <div style="background: rgba(255, 255, 255, 0.05); padding: 20px; border-radius: 10px; margin: 20px 0;">
+                    <h4>Step 4: Insert sample data</h4>
+                    <p>Click below to insert sample projects and feedback:</p>
+                    <button class="cta-button" onclick="insertSampleData()" style="background: var(--success);">
+                        <i class="fas fa-database"></i> Insert Sample Data
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
     <script>
-        // Sample Projects Data
-        const projectsData = [
-            // GitHub Repositories
-            {
-                id: 1,
-                title: "CAT CPN GO BOT",
-                category: "github",
-                description: "Cat cpn Smart assistant for tech, tools & APIs. Web solutions & automation. Available 24/7 for your digital needs",
-                tags: ["WhatsApp Bot", "JavaScript"],
-                price: "10000 ugx",
-                type: "GitHub Repositories"
-            },
-            
-            // Websites
-            {
-                id: 2,
-                title: "18+ site",
-                category: "websites",
-                description: "Stream unlimited hot neli films",
-                tags: ["Streaming"],
-                price: "Free",
-                type: "Websites"
-            },
-            {
-                id: 3,
-                title: "Cat cpn Go.",
-                category: "websites",
-                description: "Download YouTube videos and songs with streaming capabilities",
-                tags: ["YouTube", "Downloader"],
-                price: "Free",
-                type: "Websites"
-            },
-            {
-                id: 4,
-                title: "Cat cpn movies site.",
-                category: "websites",
-                description: "Best streaming site with downloading capabilities",
-                tags: ["Movies", "Streaming"],
-                price: "Free",
-                type: "Websites"
-            },
-            {
-                id: 5,
-                title: "Cat cpn ncs songs",
-                category: "websites",
-                description: "Get all free no copyright songs, you can download or stream.",
-                tags: ["Music", "Free"],
-                price: "Free",
-                type: "Websites"
-            },
-            {
-                id: 6,
-                title: "Cat cpn static host",
-                category: "websites",
-                description: "Host your website for free",
-                tags: ["Hosting", "Free"],
-                price: "Free",
-                type: "Websites"
-            },
-            {
-                id: 7,
-                title: "Catcpn X9 Ai.",
-                category: "websites",
-                description: "Best ai model that can do anything",
-                tags: ["AI", "Tools"],
-                price: "Free",
-                type: "Websites"
-            },
-            {
-                id: 8,
-                title: "Contact Us Anonymously",
-                category: "websites",
-                description: "Send us any message anonymously",
-                tags: ["Contact", "Anonymous"],
-                price: "Free",
-                type: "Websites"
-            },
-            {
-                id: 9,
-                title: "File to URL Converter",
-                category: "websites",
-                description: "Convert files to shareable URLs",
-                tags: ["File", "URL"],
-                price: "Free",
-                type: "Websites"
-            },
-            {
-                id: 10,
-                title: "Jagure Holdings Shop",
-                category: "websites",
-                description: "Online shopping platform for various products and services",
-                tags: ["E-commerce", "Shopping"],
-                price: "Free",
-                type: "Websites"
-            },
-            {
-                id: 11,
-                title: "Link shortener.",
-                category: "websites",
-                description: "Change your long url to short one",
-                tags: ["URL", "Shortener"],
-                price: "Free",
-                type: "Websites"
-            },
-            {
-                id: 12,
-                title: "Live TV Web.",
-                category: "websites",
-                description: "Watch live television channels online with CAT CPN TV",
-                tags: ["TV", "Live"],
-                price: "Free",
-                type: "Websites"
-            },
-            {
-                id: 13,
-                title: "My Portfolio",
-                category: "websites",
-                description: "Simply portfolio by cat cpn tech",
-                tags: ["Portfolio", "Personal"],
-                price: "Free",
-                type: "Websites"
-            },
-            {
-                id: 14,
-                title: "Payment Portal",
-                category: "websites",
-                description: "Online payment processing system",
-                tags: ["Payment", "Portal"],
-                price: "Free",
-                type: "Websites"
-            },
-            {
-                id: 15,
-                title: "Social Media Downloader",
-                category: "websites",
-                description: "Social media downloader via links to video",
-                tags: ["Downloader", "Social Media"],
-                price: "Free",
-                type: "Websites"
-            },
-            
-            // Web Services
-            {
-                id: 16,
-                title: "Bot Deployment",
-                category: "services",
-                description: "Professional bot deployment services on various platforms",
-                tags: ["Deployment", "Bot"],
-                price: "8000-250000 UGX",
-                type: "Web Services"
-            },
-            {
-                id: 17,
-                title: "Website Development",
-                category: "services",
-                description: "Professional website development services tailored to your needs",
-                tags: ["Development", "Website"],
-                price: "1000-10000 UGX",
-                type: "Web Services"
-            },
-            {
-                id: 18,
-                title: "WhatsApp Bot Development",
-                category: "services",
-                description: "Custom WhatsApp bot development with advanced features and automation",
-                tags: ["Bot", "WhatsApp"],
-                price: "8000-300000 UGX",
-                type: "Web Services"
-            },
-            
-            // Mobile Apps
-            {
-                id: 19,
-                title: "CAT CPN APPS STORE",
-                category: "mobile",
-                description: "Get all cat cpn apps in one place for Android",
-                tags: ["Android", "Shopping"],
-                price: "Free",
-                type: "Mobile Apps"
-            },
-            
-            // Collaborations
-            {
-                id: 20,
-                title: "PRAITECH - Buddy XTR",
-                category: "collaborations",
-                description: "Buddy XTR Project by praitech",
-                tags: ["Collaboration", "Bot"],
-                price: "Free",
-                type: "Collaborations"
-            },
-            {
-                id: 21,
-                title: "REMI BOT",
-                category: "collaborations",
-                description: "Official resources by REMI BOT",
-                tags: ["Automation", "Bot"],
-                price: "Free",
-                type: "Collaborations"
-            },
-            {
-                id: 22,
-                title: "JUSTECH",
-                category: "collaborations",
-                description: "Official resources by JusTech",
-                tags: ["Entertainment", "Movies"],
-                price: "Free",
-                type: "Collaborations"
-            },
-            {
-                id: 23,
-                title: "PRAISE TECH",
-                category: "collaborations",
-                description: "Advanced technology services and solutions",
-                tags: ["Tech", "API"],
-                price: "Free",
-                type: "Collaborations"
-            },
-            {
-                id: 24,
-                title: "TRACK TECH",
-                category: "collaborations",
-                description: "Official resources from Track Tech Inc",
-                tags: ["YouTube", "API"],
-                price: "Free",
-                type: "Collaborations"
-            },
-            {
-                id: 25,
-                title: "PRECIO PROJECTS",
-                category: "collaborations",
-                description: "Precio MD and related projects",
-                tags: ["Bot", "API"],
-                price: "Free",
-                type: "Collaborations"
-            },
-            {
-                id: 26,
-                title: "PHOENIX",
-                category: "collaborations",
-                description: "COD Mr Beast project with comprehensive features",
-                tags: ["Bot", "AI"],
-                price: "Free",
-                type: "Collaborations"
-            }
-        ];
-
-        // Feedback Data
-        const feedbackData = [
-            { name: "Nyc", comment: "So sir , am a young developer and am basically interested in web development , do you know of sites that let you host your web for free", date: "Dec 17, 2025, 11:39 PM" },
-            { name: "Chubby", comment: "It's very nice", date: "Dec 16, 2025, 04:39 PM" },
-            { name: "AWOOWE", comment: "hi", date: "Dec 14, 2025, 11:31 PM" },
-            { name: "AWOOWE", comment: "hhhh", date: "Dec 14, 2025, 11:31 PM" },
-            { name: "William", comment: "How to pair", date: "Dec 12, 2025, 03:23 PM" },
-            { name: "McMajesty_Officiall🇬🇭🇺🇸", comment: "Hi team, Good morning I trust you'al doing well! Please I have problem with my Heroku account, when I tried to login they said 'couldn't find the user'. I have been tried several times but here yet they still give me the same feedback!!😳😌💔😭", date: "Dec 10, 2025, 07:41 PM" },
-            { name: "Frontier", comment: "L love the movie stream but l believe that y'all should add the phonecast cos sometimes l have to cast to my tv cos l can't always be watching on my phone you see so can y'all please add the casting feature which l think would be really grt", date: "Dec 9, 2025, 05:34 PM" },
-            { name: "Hasheem", comment: "Best one", date: "Dec 9, 2025, 12:31 PM" },
-            { name: "Tabo", comment: "⭐️⭐️⭐️⭐️⭐️", date: "Dec 9, 2025, 06:26 AM" },
-            { name: "Taizon", comment: "Awesome", date: "Dec 8, 2025, 05:22 AM" },
-            { name: "Taizon", comment: "Good", date: "Dec 7, 2025, 12:50 PM" },
-            { name: "Paul", comment: "Great", date: "Dec 1, 2025, 11:46 AM" },
-            { name: "Alfred mutharimi", comment: "Very good", date: "Dec 1, 2025, 12:13 AM" },
-            { name: "Desh", comment: "Very nice", date: "Nov 24, 2025, 11:07 AM" },
-            { name: "Collo blue", comment: "Good", date: "Nov 24, 2025, 05:42 AM" },
-            { name: "Mulax Prime", comment: "I just wanted to express my sincere gratitude for creating the CAT CPN bot. It's been incredibly helpful and well-designed, and I truly appreciate the time, effort, and expertise that went into building it. Thank you for making such a valuable tool available to the community! Also, shoutout for the amazing apps like CAT Praise, Movie Site, and others — they've been a huge help to Mulax Prime. Brother, your work is making a real difference. Let's keep pushing forward and growing the world of tech together!", date: "Nov 10, 2025, 08:40 PM" }
-        ];
-
+        // Global Variables
+        let supabase = null;
+        let allProjects = [];
+        let currentFilter = 'all';
+        let isSupabaseConnected = false;
+        
         // Initialize the page
         document.addEventListener('DOMContentLoaded', () => {
             createParticles();
             initScrollAnimations();
             initMobileMenu();
-            loadProjects();
-            loadFeedback();
             initSearch();
-            
-            // Update stats with animation
-            animateStats();
-            
-            // Initialize feedback form
             initFeedbackForm();
+            initAddProjectForm();
+            
+            // Initialize Supabase
+            initializeSupabase();
+            
+            // Load initial data
+            loadInitialData();
             
             // Show welcome notification
-            showNotification("🚀 Welcome to CAT CPN! Created by Nelson Oundo");
+            showNotification("🚀 Welcome to CAT CPN! Loading data...");
             
             // Update active nav link on scroll
             window.addEventListener('scroll', updateActiveNavLink);
         });
+
+        // Initialize Supabase
+        function initializeSupabase() {
+            try {
+                const supabaseUrl = 'https://wzgpxnnbmzvtqnaaoqdu.supabase.co';
+                const supabaseKey = 'sb_publishable_F9jVtmjWWHoI6uQcS9L2dw_KZZVx6Fa';
+                
+                // Check if Supabase is available
+                if (typeof window.supabase === 'undefined') {
+                    console.error('Supabase SDK not loaded');
+                    showNotification('⚠️ Supabase SDK not loaded. Using local data.');
+                    loadLocalData();
+                    return;
+                }
+                
+                supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+                console.log('Supabase initialized');
+                isSupabaseConnected = true;
+                
+            } catch (error) {
+                console.error('Error initializing Supabase:', error);
+                showNotification('⚠️ Error connecting to Supabase. Using local data.');
+                loadLocalData();
+            }
+        }
 
         // Create animated particles
         function createParticles() {
@@ -1886,55 +1899,322 @@
             });
         }
 
-        // Animate stats counting
-        function animateStats() {
-            const stats = [
-                { id: 'starsCount', target: 329 },
-                { id: 'forksCount', target: 1273 },
-                { id: 'watchersCount', target: 329 },
-                { id: 'issuesCount', target: 27 }
+        // Load initial data
+        async function loadInitialData() {
+            // First try to load from Supabase
+            if (isSupabaseConnected && supabase) {
+                try {
+                    await loadProjectsFromSupabase();
+                    await loadFeedbackFromSupabase();
+                    showNotification('✅ Data loaded from Supabase!');
+                    return;
+                } catch (error) {
+                    console.error('Error loading from Supabase:', error);
+                }
+            }
+            
+            // If Supabase fails, load local data
+            loadLocalData();
+        }
+
+        // Load projects from Supabase
+        async function loadProjectsFromSupabase() {
+            try {
+                if (!supabase) {
+                    throw new Error('Supabase not initialized');
+                }
+                
+                const { data, error } = await supabase
+                    .from('projects')
+                    .select('*')
+                    .order('created_at', { ascending: false });
+                
+                if (error) {
+                    console.error('Supabase error:', error);
+                    throw error;
+                }
+                
+                if (data && data.length > 0) {
+                    allProjects = data;
+                    updateCategoryCounts();
+                    filterProjects('all');
+                    return true;
+                } else {
+                    // No data in Supabase
+                    return false;
+                }
+                
+            } catch (error) {
+                console.error('Error loading projects from Supabase:', error);
+                throw error;
+            }
+        }
+
+        // Load feedback from Supabase
+        async function loadFeedbackFromSupabase() {
+            try {
+                if (!supabase) {
+                    throw new Error('Supabase not initialized');
+                }
+                
+                const { data, error } = await supabase
+                    .from('feedback')
+                    .select('*')
+                    .order('created_at', { ascending: false })
+                    .limit(10);
+                
+                if (error) throw error;
+                
+                renderFeedback(data || []);
+                
+                // Update feedback count in stats
+                const count = data ? data.length : 0;
+                document.getElementById('feedbackCount').textContent = count;
+                
+            } catch (error) {
+                console.error('Error loading feedback from Supabase:', error);
+                throw error;
+            }
+        }
+
+        // Load local data (fallback)
+        function loadLocalData() {
+            // Sample projects data
+            allProjects = [
+                {
+                    id: 1,
+                    title: "CAT CPN GO BOT",
+                    category: "github",
+                    description: "Cat cpn Smart assistant for tech, tools & APIs. Web solutions & automation. Available 24/7 for your digital needs",
+                    tags: ["WhatsApp Bot", "JavaScript"],
+                    price: "10000 ugx",
+                    type: "GitHub Repositories",
+                    url: "#"
+                },
+                {
+                    id: 2,
+                    title: "18+ site",
+                    category: "websites",
+                    description: "Stream unlimited hot neli films",
+                    tags: ["Streaming"],
+                    price: "Free",
+                    type: "Websites",
+                    url: "#"
+                },
+                {
+                    id: 3,
+                    title: "Cat cpn Go.",
+                    category: "websites",
+                    description: "Download YouTube videos and songs with streaming capabilities",
+                    tags: ["YouTube", "Downloader"],
+                    price: "Free",
+                    type: "Websites",
+                    url: "#"
+                },
+                {
+                    id: 4,
+                    title: "Cat cpn movies site.",
+                    category: "websites",
+                    description: "Best streaming site with downloading capabilities",
+                    tags: ["Movies", "Streaming"],
+                    price: "Free",
+                    type: "Websites",
+                    url: "#"
+                },
+                {
+                    id: 5,
+                    title: "Cat cpn ncs songs",
+                    category: "websites",
+                    description: "Get all free no copyright songs, you can download or stream.",
+                    tags: ["Music", "Free"],
+                    price: "Free",
+                    type: "Websites",
+                    url: "#"
+                },
+                {
+                    id: 6,
+                    title: "Cat cpn static host",
+                    category: "websites",
+                    description: "Host your website for free",
+                    tags: ["Hosting", "Free"],
+                    price: "Free",
+                    type: "Websites",
+                    url: "#"
+                },
+                {
+                    id: 7,
+                    title: "Catcpn X9 Ai.",
+                    category: "websites",
+                    description: "Best ai model that can do anything",
+                    tags: ["AI", "Tools"],
+                    price: "Free",
+                    type: "Websites",
+                    url: "#"
+                },
+                {
+                    id: 8,
+                    title: "Contact Us Anonymously",
+                    category: "websites",
+                    description: "Send us any message anonymously",
+                    tags: ["Contact", "Anonymous"],
+                    price: "Free",
+                    type: "Websites",
+                    url: "#"
+                },
+                {
+                    id: 9,
+                    title: "File to URL Converter",
+                    category: "websites",
+                    description: "Convert files to shareable URLs",
+                    tags: ["File", "URL"],
+                    price: "Free",
+                    type: "Websites",
+                    url: "#"
+                },
+                {
+                    id: 10,
+                    title: "Jagure Holdings Shop",
+                    category: "websites",
+                    description: "Online shopping platform for various products and services",
+                    tags: ["E-commerce", "Shopping"],
+                    price: "Free",
+                    type: "Websites",
+                    url: "#"
+                }
             ];
             
-            stats.forEach(stat => {
-                const element = document.getElementById(stat.id);
-                let current = 0;
-                const increment = stat.target / 100;
-                const timer = setInterval(() => {
-                    current += increment;
-                    if (current >= stat.target) {
-                        element.textContent = stat.target;
-                        clearInterval(timer);
-                    } else {
-                        element.textContent = Math.floor(current);
-                    }
-                }, 20);
+            // Sample feedback data
+            const sampleFeedback = [
+                {
+                    name: "Nyc",
+                    comment: "So sir , am a young developer and am basically interested in web development , do you know of sites that let you host your web for free",
+                    rating: 5,
+                    created_at: new Date().toISOString()
+                },
+                {
+                    name: "Chubby",
+                    comment: "It's very nice",
+                    rating: 5,
+                    created_at: new Date().toISOString()
+                },
+                {
+                    name: "AWOOWE",
+                    comment: "hi",
+                    rating: 4,
+                    created_at: new Date().toISOString()
+                },
+                {
+                    name: "William",
+                    comment: "How to pair",
+                    rating: 4,
+                    created_at: new Date().toISOString()
+                },
+                {
+                    name: "McMajesty_Officiall🇬🇭🇺🇸",
+                    comment: "Hi team, Good morning I trust you'al doing well! Please I have problem with my Heroku account, when I tried to login they said 'couldn't find the user'. I have been tried several times but here yet they still give me the same feedback!!😳😌💔😭",
+                    rating: 5,
+                    created_at: new Date().toISOString()
+                }
+            ];
+            
+            updateCategoryCounts();
+            filterProjects('all');
+            renderFeedback(sampleFeedback);
+            
+            document.getElementById('feedbackCount').textContent = sampleFeedback.length;
+            showNotification('📁 Using local sample data. Click Admin → Setup Database to connect Supabase.');
+        }
+
+        // Use local data (admin function)
+        function useLocalData() {
+            loadLocalData();
+            toggleAdminPanel();
+            showNotification('📁 Switched to local data');
+        }
+
+        // Update category counts
+        function updateCategoryCounts() {
+            const categories = ['all', 'github', 'websites', 'services', 'mobile', 'collaborations'];
+            
+            categories.forEach(category => {
+                let count = 0;
+                if (category === 'all') {
+                    count = allProjects.length;
+                } else {
+                    count = allProjects.filter(p => p.category === category).length;
+                }
+                
+                const element = document.getElementById(`${category}Count`);
+                if (element) {
+                    element.textContent = `${count} Item${count !== 1 ? 's' : ''}`;
+                }
             });
         }
 
-        // Load projects
-        function loadProjects(filter = 'all') {
+        // Filter projects
+        function filterProjects(category) {
+            currentFilter = category;
             const grid = document.getElementById('projectsGrid');
+            
+            // Show loading spinner
+            grid.innerHTML = '<div class="spinner" id="loadingSpinner"></div>';
+            
+            // Simulate loading delay
+            setTimeout(() => {
+                const filteredProjects = category === 'all' 
+                    ? allProjects 
+                    : allProjects.filter(project => project.category === category);
+                
+                renderProjects(filteredProjects);
+                
+                // Update active category
+                document.querySelectorAll('.category-box').forEach(box => {
+                    box.style.transform = 'translateY(0)';
+                    box.style.borderColor = 'var(--glass-border)';
+                });
+                
+                if (category !== 'all') {
+                    const activeBox = document.querySelector(`.category-box[onclick*="${category}"]`);
+                    if (activeBox) {
+                        activeBox.style.transform = 'translateY(-10px)';
+                        activeBox.style.borderColor = 'var(--primary)';
+                    }
+                }
+            }, 300);
+        }
+
+        // Render projects
+        function renderProjects(projects) {
+            const grid = document.getElementById('projectsGrid');
+            
+            if (projects.length === 0) {
+                grid.innerHTML = `
+                    <div style="grid-column: 1 / -1; text-align: center; padding: 50px;">
+                        <i class="fas fa-folder-open" style="font-size: 3rem; color: #64748b; margin-bottom: 20px;"></i>
+                        <h3 style="color: var(--light); margin-bottom: 10px;">No projects found</h3>
+                        <p style="color: #94a3b8;">No projects available in this category</p>
+                    </div>
+                `;
+                return;
+            }
+            
             grid.innerHTML = '';
             
-            const filteredProjects = filter === 'all' 
-                ? projectsData 
-                : projectsData.filter(project => project.category === filter);
-            
-            filteredProjects.forEach(project => {
+            projects.forEach(project => {
                 const card = document.createElement('div');
                 card.className = 'project-card animate-on-scroll';
                 card.innerHTML = `
                     <div class="project-content">
                         <div class="project-title">
                             <span>${project.title}</span>
-                            <span class="project-price">${project.price}</span>
+                            <span class="project-price">${project.price || 'Free'}</span>
                         </div>
                         <div style="color: #64748b; font-size: 0.9rem; margin-bottom: 10px;">
-                            ${project.type}
+                            ${project.type || 'Project'}
                         </div>
                         <p class="project-description">${project.description}</p>
                         <div class="project-tags">
-                            ${project.tags.map(tag => `<span class="project-tag">${tag}</span>`).join('')}
+                            ${(project.tags || []).map(tag => `<span class="project-tag">${tag}</span>`).join('')}
                         </div>
                         <div class="project-actions">
                             <button class="action-btn details-btn" onclick="showProjectDetails(${project.id})">
@@ -1955,30 +2235,9 @@
             }, 100);
         }
 
-        // Filter projects by category
-        function filterProjects(category) {
-            loadProjects(category);
-            
-            // Update active category
-            document.querySelectorAll('.category-box').forEach(box => {
-                box.style.transform = 'translateY(0)';
-                box.style.borderColor = 'var(--glass-border)';
-            });
-            
-            if (category !== 'all') {
-                const activeBox = document.querySelector(`.category-box[onclick*="${category}"]`);
-                if (activeBox) {
-                    activeBox.style.transform = 'translateY(-10px)';
-                    activeBox.style.borderColor = 'var(--primary)';
-                }
-            }
-            
-            scrollToSection('projects');
-        }
-
         // Show project details
-        function showProjectDetails(projectId) {
-            const project = projectsData.find(p => p.id === projectId);
+        async function showProjectDetails(projectId) {
+            const project = allProjects.find(p => p.id === projectId);
             if (!project) return;
             
             const modal = document.getElementById('projectModal');
@@ -1991,10 +2250,10 @@
                     <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 20px;">
                         <div>
                             <h3 style="color: var(--light); margin-bottom: 10px;">${project.title}</h3>
-                            <div style="color: #64748b; font-size: 1rem;">${project.type}</div>
+                            <div style="color: #64748b; font-size: 1rem;">${project.type || 'Project'}</div>
                         </div>
                         <div style="background: var(--gradient); padding: 10px 20px; border-radius: 20px; font-weight: 600;">
-                            ${project.price}
+                            ${project.price || 'Free'}
                         </div>
                     </div>
                     
@@ -2006,7 +2265,7 @@
                     <div style="margin-bottom: 30px;">
                         <h4 style="color: var(--accent); margin-bottom: 10px;">Features</h4>
                         <div class="project-tags">
-                            ${project.tags.map(tag => `<span class="project-tag">${tag}</span>`).join('')}
+                            ${(project.tags || []).map(tag => `<span class="project-tag">${tag}</span>`).join('')}
                         </div>
                     </div>
                     
@@ -2027,33 +2286,67 @@
 
         // Visit project
         function visitProject(projectId) {
-            const project = projectsData.find(p => p.id === projectId);
+            const project = allProjects.find(p => p.id === projectId);
             if (!project) return;
             
-            showNotification(`🌐 Opening ${project.title}...`);
-            // In a real app, this would redirect to the actual URL
-            // window.open(project.url, '_blank');
+            if (project.url && project.url !== '#') {
+                window.open(project.url, '_blank');
+                showNotification(`🌐 Opening ${project.title}...`);
+            } else {
+                showNotification(`🔗 No URL available for ${project.title}`);
+            }
             
             closeModal('projectModal');
         }
 
-        // Load feedback
-        function loadFeedback() {
+        // Render feedback
+        function renderFeedback(feedbackList) {
             const container = document.getElementById('feedbackComments');
+            
+            if (!feedbackList || feedbackList.length === 0) {
+                container.innerHTML = `
+                    <div style="text-align: center; padding: 40px; color: #64748b;">
+                        <i class="fas fa-comment-slash" style="font-size: 3rem; margin-bottom: 20px;"></i>
+                        <p>No feedback yet. Be the first to share your thoughts!</p>
+                    </div>
+                `;
+                return;
+            }
+            
             container.innerHTML = '';
             
-            feedbackData.forEach(feedback => {
+            feedbackList.forEach(feedback => {
                 const comment = document.createElement('div');
                 comment.className = 'feedback-comment animate-on-scroll';
+                
+                // Format date
+                const date = new Date(feedback.created_at);
+                const formattedDate = date.toLocaleDateString('en-US', {
+                    month: 'short',
+                    day: 'numeric',
+                    year: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+                
+                // Generate stars based on rating
+                const rating = feedback.rating || 5;
+                const stars = '⭐'.repeat(rating);
+                
                 comment.innerHTML = `
                     <div class="comment-header">
-                        <div class="comment-author">${feedback.name}</div>
-                        <div class="comment-date">${feedback.date}</div>
+                        <div class="comment-author">${feedback.name} ${stars}</div>
+                        <div class="comment-date">${formattedDate}</div>
                     </div>
                     <div class="comment-text">${feedback.comment}</div>
                 `;
                 container.appendChild(comment);
             });
+            
+            // Re-initialize scroll animations
+            setTimeout(() => {
+                initScrollAnimations();
+            }, 100);
         }
 
         // Initialize feedback form
@@ -2067,47 +2360,212 @@
             }
         }
 
-        function handleFeedbackSubmit(e) {
+        // Handle feedback submission
+        async function handleFeedbackSubmit(e) {
             e.preventDefault();
             
             const form = e.target;
             const name = form.querySelector('input[type="text"]').value;
             const feedback = form.querySelector('textarea').value;
+            const rating = parseInt(form.querySelector('select').value) || 5;
             
             if (!name || !feedback) {
                 showNotification('⚠️ Please fill in all required fields');
                 return;
             }
             
-            // Add new feedback
-            const newFeedback = {
+            // If Supabase is connected, save there
+            if (isSupabaseConnected && supabase) {
+                try {
+                    const { data, error } = await supabase
+                        .from('feedback')
+                        .insert([
+                            {
+                                name: name,
+                                comment: feedback,
+                                rating: rating
+                            }
+                        ]);
+                    
+                    if (error) throw error;
+                    
+                    // Reset form
+                    form.reset();
+                    
+                    // Close modal if open
+                    closeModal('feedbackModal');
+                    
+                    // Reload feedback
+                    await loadFeedbackFromSupabase();
+                    
+                    showNotification('✅ Thank you for your feedback!');
+                    
+                } catch (error) {
+                    console.error('Error submitting feedback to Supabase:', error);
+                    // Fallback to local storage
+                    saveFeedbackLocally(name, feedback, rating);
+                }
+            } else {
+                // Save locally
+                saveFeedbackLocally(name, feedback, rating);
+            }
+        }
+
+        // Save feedback locally
+        function saveFeedbackLocally(name, comment, rating) {
+            const feedback = {
                 name: name,
-                comment: feedback,
-                date: new Date().toLocaleString('en-US', {
-                    month: 'short',
-                    day: 'numeric',
-                    year: 'numeric',
-                    hour: '2-digit',
-                    minute: '2-digit'
-                })
+                comment: comment,
+                rating: rating,
+                created_at: new Date().toISOString()
             };
             
-            feedbackData.unshift(newFeedback);
-            loadFeedback();
+            // Get existing feedback from localStorage
+            let existingFeedback = JSON.parse(localStorage.getItem('catcpn_feedback') || '[]');
+            existingFeedback.unshift(feedback);
+            
+            // Save back to localStorage
+            localStorage.setItem('catcpn_feedback', JSON.stringify(existingFeedback));
             
             // Reset form
-            form.reset();
+            document.getElementById('feedbackForm').reset();
+            if (document.getElementById('modalFeedbackForm')) {
+                document.getElementById('modalFeedbackForm').reset();
+            }
             
             // Close modal if open
             closeModal('feedbackModal');
             
-            showNotification('✅ Thank you for your feedback!');
+            // Update UI
+            renderFeedback(existingFeedback.slice(0, 10));
+            document.getElementById('feedbackCount').textContent = existingFeedback.length;
+            
+            showNotification('✅ Thank you for your feedback! (Saved locally)');
+        }
+
+        // Initialize add project form
+        function initAddProjectForm() {
+            const form = document.getElementById('addProjectForm');
+            if (form) {
+                form.addEventListener('submit', handleAddProjectSubmit);
+            }
+        }
+
+        // Handle add project submission
+        async function handleAddProjectSubmit(e) {
+            e.preventDefault();
+            
+            const form = e.target;
+            const title = form.querySelector('#projectTitle').value;
+            const category = form.querySelector('#projectCategory').value;
+            const description = form.querySelector('#projectDescription').value;
+            const tags = form.querySelector('#projectTags').value.split(',').map(tag => tag.trim()).filter(tag => tag);
+            const price = form.querySelector('#projectPrice').value;
+            const url = form.querySelector('#projectURL').value;
+            
+            if (!title || !description) {
+                showNotification('⚠️ Please fill in all required fields');
+                return;
+            }
+            
+            const project = {
+                title: title,
+                category: category,
+                description: description,
+                tags: tags,
+                price: price,
+                url: url,
+                type: getCategoryName(category)
+            };
+            
+            // If Supabase is connected, save there
+            if (isSupabaseConnected && supabase) {
+                try {
+                    const { data, error } = await supabase
+                        .from('projects')
+                        .insert([project]);
+                    
+                    if (error) throw error;
+                    
+                    showNotification('✅ Project added to Supabase!');
+                    
+                } catch (error) {
+                    console.error('Error adding project to Supabase:', error);
+                    // Fallback to local storage
+                    addProjectLocally(project);
+                }
+            } else {
+                // Save locally
+                addProjectLocally(project);
+            }
+            
+            // Reset form
+            form.reset();
+            
+            // Close modal
+            closeModal('addProjectModal');
+            
+            // Reload projects
+            await loadInitialData();
+        }
+
+        // Add project locally
+        function addProjectLocally(project) {
+            project.id = Date.now(); // Generate unique ID
+            
+            // Get existing projects from localStorage
+            let existingProjects = JSON.parse(localStorage.getItem('catcpn_projects') || '[]');
+            existingProjects.unshift(project);
+            
+            // Save back to localStorage
+            localStorage.setItem('catcpn_projects', JSON.stringify(existingProjects));
+            
+            // Update allProjects array
+            allProjects = existingProjects;
+            
+            // Update UI
+            updateCategoryCounts();
+            filterProjects(currentFilter);
+            
+            showNotification('✅ Project added! (Saved locally)');
+        }
+
+        // Get category name
+        function getCategoryName(category) {
+            const categories = {
+                'github': 'GitHub Repositories',
+                'websites': 'Websites',
+                'services': 'Web Services',
+                'mobile': 'Mobile Apps',
+                'collaborations': 'Collaborations'
+            };
+            return categories[category] || 'Project';
+        }
+
+        // Toggle admin panel
+        function toggleAdminPanel() {
+            const panel = document.getElementById('adminPanel');
+            panel.classList.toggle('active');
         }
 
         // Show feedback modal
         function showFeedbackModal() {
             document.getElementById('feedbackModal').classList.add('active');
             document.body.style.overflow = 'hidden';
+        }
+
+        // Show add project modal
+        function showAddProjectModal() {
+            document.getElementById('addProjectModal').classList.add('active');
+            document.body.style.overflow = 'hidden';
+            toggleAdminPanel(); // Close admin panel
+        }
+
+        // Show setup instructions
+        function showSetupInstructions() {
+            document.getElementById('setupModal').classList.add('active');
+            document.body.style.overflow = 'hidden';
+            toggleAdminPanel(); // Close admin panel
         }
 
         // Close modal
@@ -2117,73 +2575,142 @@
             document.body.style.overflow = 'auto';
         }
 
+        // Test Supabase connection
+        async function testSupabaseConnection() {
+            const resultDiv = document.getElementById('connectionTestResult');
+            resultDiv.innerHTML = '<div class="spinner" style="width: 20px; height: 20px;"></div>';
+            
+            try {
+                const { data, error } = await supabase
+                    .from('projects')
+                    .select('count')
+                    .limit(1);
+                
+                if (error) throw error;
+                
+                resultDiv.innerHTML = `
+                    <div style="color: var(--success);">
+                        <i class="fas fa-check-circle"></i> Connection successful!
+                    </div>
+                `;
+                isSupabaseConnected = true;
+                
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <div style="color: var(--danger);">
+                        <i class="fas fa-times-circle"></i> Connection failed: ${error.message}
+                    </div>
+                `;
+                isSupabaseConnected = false;
+            }
+        }
+
+        // Insert sample data
+        async function insertSampleData() {
+            try {
+                // Sample projects
+                const sampleProjects = [
+                    {
+                        title: "CAT CPN GO BOT",
+                        category: "github",
+                        description: "Cat cpn Smart assistant for tech, tools & APIs. Web solutions & automation. Available 24/7 for your digital needs",
+                        tags: ["WhatsApp Bot", "JavaScript"],
+                        price: "10000 ugx",
+                        type: "GitHub Repositories",
+                        url: "#"
+                    },
+                    {
+                        title: "18+ site",
+                        category: "websites",
+                        description: "Stream unlimited hot neli films",
+                        tags: ["Streaming"],
+                        price: "Free",
+                        type: "Websites",
+                        url: "#"
+                    },
+                    {
+                        title: "Cat cpn Go.",
+                        category: "websites",
+                        description: "Download YouTube videos and songs with streaming capabilities",
+                        tags: ["YouTube", "Downloader"],
+                        price: "Free",
+                        type: "Websites",
+                        url: "#"
+                    }
+                ];
+                
+                // Insert projects
+                for (const project of sampleProjects) {
+                    const { error } = await supabase
+                        .from('projects')
+                        .insert([project]);
+                    
+                    if (error) throw error;
+                }
+                
+                // Sample feedback
+                const sampleFeedback = [
+                    {
+                        name: "Nyc",
+                        comment: "So sir , am a young developer and am basically interested in web development , do you know of sites that let you host your web for free",
+                        rating: 5
+                    },
+                    {
+                        name: "Chubby",
+                        comment: "It's very nice",
+                        rating: 5
+                    }
+                ];
+                
+                // Insert feedback
+                for (const feedback of sampleFeedback) {
+                    const { error } = await supabase
+                        .from('feedback')
+                        .insert([feedback]);
+                    
+                    if (error) throw error;
+                }
+                
+                showNotification('✅ Sample data inserted successfully!');
+                closeModal('setupModal');
+                
+                // Reload data
+                await loadInitialData();
+                
+            } catch (error) {
+                console.error('Error inserting sample data:', error);
+                showNotification('❌ Error inserting sample data');
+            }
+        }
+
         // Initialize search
         function initSearch() {
-            const searchBar = document.querySelector('.search-bar');
-            const searchBtn = document.querySelector('.search-bar + .cta-button');
+            const searchInput = document.getElementById('searchInput');
+            const searchButton = document.getElementById('searchButton');
             
-            searchBtn.addEventListener('click', () => performSearch(searchBar.value));
-            searchBar.addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') performSearch(searchBar.value);
+            searchButton.addEventListener('click', () => performSearch(searchInput.value));
+            searchInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') performSearch(searchInput.value);
             });
         }
 
+        // Perform search
         function performSearch(query) {
-            if (query.trim()) {
-                showNotification(`🔍 Searching for: "${query}"`);
-                
-                // Filter projects based on search query
-                const filtered = projectsData.filter(project => 
-                    project.title.toLowerCase().includes(query.toLowerCase()) ||
-                    project.description.toLowerCase().includes(query.toLowerCase()) ||
-                    project.tags.some(tag => tag.toLowerCase().includes(query.toLowerCase()))
-                );
-                
-                // Display search results
-                const grid = document.getElementById('projectsGrid');
-                grid.innerHTML = '';
-                
-                if (filtered.length === 0) {
-                    grid.innerHTML = `
-                        <div style="grid-column: 1 / -1; text-align: center; padding: 50px;">
-                            <i class="fas fa-search" style="font-size: 3rem; color: #64748b; margin-bottom: 20px;"></i>
-                            <h3 style="color: var(--light); margin-bottom: 10px;">No results found</h3>
-                            <p style="color: #94a3b8;">Try searching with different keywords</p>
-                        </div>
-                    `;
-                } else {
-                    filtered.forEach(project => {
-                        const card = document.createElement('div');
-                        card.className = 'project-card';
-                        card.innerHTML = `
-                            <div class="project-content">
-                                <div class="project-title">
-                                    <span>${project.title}</span>
-                                    <span class="project-price">${project.price}</span>
-                                </div>
-                                <div style="color: #64748b; font-size: 0.9rem; margin-bottom: 10px;">
-                                    ${project.type}
-                                </div>
-                                <p class="project-description">${project.description}</p>
-                                <div class="project-tags">
-                                    ${project.tags.map(tag => `<span class="project-tag">${tag}</span>`).join('')}
-                                </div>
-                                <div class="project-actions">
-                                    <button class="action-btn details-btn" onclick="showProjectDetails(${project.id})">
-                                        <i class="fas fa-info-circle"></i> Details
-                                    </button>
-                                    <button class="action-btn visit-btn" onclick="visitProject(${project.id})">
-                                        <i class="fas fa-external-link-alt"></i> Visit
-                                    </button>
-                                </div>
-                            </div>
-                        `;
-                        grid.appendChild(card);
-                    });
-                }
-                
-                scrollToSection('projects');
+            if (!query.trim()) {
+                filterProjects(currentFilter);
+                return;
             }
+            
+            const filtered = allProjects.filter(project => 
+                project.title.toLowerCase().includes(query.toLowerCase()) ||
+                project.description.toLowerCase().includes(query.toLowerCase()) ||
+                (project.tags && project.tags.some(tag => tag.toLowerCase().includes(query.toLowerCase())))
+            );
+            
+            renderProjects(filtered);
+            
+            showNotification(`🔍 Found ${filtered.length} result${filtered.length !== 1 ? 's' : ''} for "${query}"`);
+            scrollToSection('projects');
         }
 
         // Scroll to section
@@ -2249,7 +2776,14 @@
             }
         }
 
-        // Show auth modal (placeholder)
+        // Refresh data
+        function refreshData() {
+            showNotification('🔄 Refreshing data...');
+            loadInitialData();
+            toggleAdminPanel();
+        }
+
+        // Show auth modal
         function showAuthModal() {
             showNotification('🔐 Login feature coming soon!');
         }
